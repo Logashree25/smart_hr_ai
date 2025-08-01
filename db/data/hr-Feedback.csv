@@ -1,0 +1,7 @@
+ID,EmployeeID_ID,FromUserID_ID,Date,Text,Type
+950e8400-e29b-41d4-a716-446655440001,550e8400-e29b-41d4-a716-446655440002,550e8400-e29b-41d4-a716-446655440001,2024-01-10T14:30:00Z,Sarah consistently delivers high-quality code and mentors junior developers effectively,manager
+950e8400-e29b-41d4-a716-446655440002,550e8400-e29b-41d4-a716-446655440003,550e8400-e29b-41d4-a716-446655440002,2024-01-12T09:15:00Z,Mike shows great potential and is eager to learn. Could benefit from more complex assignments,peer
+950e8400-e29b-41d4-a716-446655440003,550e8400-e29b-41d4-a716-446655440004,550e8400-e29b-41d4-a716-446655440001,2024-01-15T16:45:00Z,Lisa has excellent attention to detail and catches critical bugs before release,manager
+950e8400-e29b-41d4-a716-446655440004,550e8400-e29b-41d4-a716-446655440006,550e8400-e29b-41d4-a716-446655440005,2024-01-18T11:20:00Z,Emma is very responsive to employee needs and handles HR matters professionally,manager
+950e8400-e29b-41d4-a716-446655440005,550e8400-e29b-41d4-a716-446655440008,550e8400-e29b-41d4-a716-446655440007,2024-01-20T13:10:00Z,Anna creates engaging marketing content and collaborates well with the design team,peer
+950e8400-e29b-41d4-a716-446655440006,550e8400-e29b-41d4-a716-446655440010,550e8400-e29b-41d4-a716-446655440009,2024-01-22T10:30:00Z,Jennifer consistently exceeds sales targets and maintains excellent client relationships,manager

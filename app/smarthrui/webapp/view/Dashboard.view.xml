@@ -1,0 +1,88 @@
+<mvc:View
+    controllerName="smart.hr.portal.controller.Dashboard"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+    xmlns="sap.m">
+
+    <Page id="dashboardPage" title="{i18n>dashboardTitle}" showNavButton="false">
+        <content>
+            <VBox class="sapUiMediumMargin">
+
+                <!-- Header -->
+                <Title text="{i18n>dashboardTitle}" level="H1" class="sapUiMediumMarginBottom"/>
+                <Text text="{i18n>welcomeMessage}" class="sapUiMediumMarginBottom"/>
+
+                <!-- KPI Cards -->
+                <HBox wrap="Wrap" class="sapUiMediumMarginBottom">
+
+                    <!-- Total Employees Card -->
+                    <f:Card width="300px" class="sapUiTinyMargin">
+                        <f:header>
+                            <card:Header title="Total Employees" iconSrc="sap-icon://group"/>
+                        </f:header>
+                        <f:content>
+                            <VBox alignItems="Center" class="sapUiMediumMargin">
+                                <ObjectNumber number="{/kpis/totalEmployees}"
+                                            emphasized="true"
+                                            state="Information"/>
+                                <Text text="Active Workforce" class="sapUiTinyText"/>
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+
+                    <!-- Average Satisfaction Card -->
+                    <f:Card width="300px" class="sapUiTinyMargin">
+                        <f:header>
+                            <card:Header title="Avg Satisfaction" iconSrc="sap-icon://smiley"/>
+                        </f:header>
+                        <f:content>
+                            <VBox alignItems="Center" class="sapUiMediumMargin">
+                                <ObjectNumber number="{/kpis/avgSatisfaction}"
+                                            unit="/10"
+                                            emphasized="true"
+                                            state="Success"/>
+                                <Text text="Employee Rating" class="sapUiTinyText"/>
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+
+                    <!-- Attrition Risk Card -->
+                    <f:Card width="300px" class="sapUiTinyMargin">
+                        <f:header>
+                            <card:Header title="Attrition Risk" iconSrc="sap-icon://warning"/>
+                        </f:header>
+                        <f:content>
+                            <VBox alignItems="Center" class="sapUiMediumMargin">
+                                <ObjectNumber number="{/kpis/attritionRisk}"
+                                            unit="%"
+                                            emphasized="true"
+                                            state="Error"/>
+                                <Text text="High Risk Employees" class="sapUiTinyText"/>
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+
+                </HBox>
+
+                <!-- Employee List -->
+                <f:Card class="sapUiMediumMarginTop">
+                    <f:header>
+                        <card:Header title="Recent Employees" iconSrc="sap-icon://employee"/>
+                    </f:header>
+                    <f:content>
+                        <List items="{/employees}" noDataText="No employees found">
+                            <StandardListItem
+                                title="{firstName} {lastName}"
+                                description="{department} - {position}"
+                                info="{satisfaction}/10"
+                                infoState="Success"
+                                press="onEmployeePress"/>
+                        </List>
+                    </f:content>
+                </f:Card>
+
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

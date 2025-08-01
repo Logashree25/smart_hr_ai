@@ -1,0 +1,67 @@
+{
+  "name": "smart_HR_portal",
+  "version": "1.0.0",
+  "description": "Smart HR Insights Portal - CAP-based HR analytics platform with AI-powered insights.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap/cds": "^9",
+    "express": "^4",
+    "@sap/xssec": "^4",
+    "@cap-js/hana": "^2"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@cap-js/cds-types": "^0.13.0",
+    "@cap-js/sqlite": "^2",
+    "@sap/cds-dk": ">=8",
+    "mocha": "^10"
+  },
+  "scripts": {
+    "start": "cds run",
+    "test": "mocha test/**/*.test.js --timeout 10000",
+    "test:watch": "mocha test/**/*.test.js --timeout 10000 --watch",
+    "build": "cds build",
+    "deploy": "cds deploy",
+    "init": "node scripts/init-db.js"
+  },
+  "cds": {
+    "requires": {
+      "db": {
+        "[production]": {
+          "kind": "hana"
+        },
+        "[development]": {
+          "kind": "sqlite",
+          "credentials": {
+            "url": "db.sqlite"
+          }
+        }
+      },
+      "auth": {
+        "[production]": {
+          "kind": "xsuaa"
+        },
+        "[development]": {
+          "kind": "mocked"
+        }
+      }
+    },
+    "build": {
+      "target": "gen",
+      "tasks": [
+        {
+          "for": "hana",
+          "dest": "../db"
+        },
+        {
+          "for": "node-cf",
+          "dest": "../srv"
+        }
+      ]
+    }
+  }
+}

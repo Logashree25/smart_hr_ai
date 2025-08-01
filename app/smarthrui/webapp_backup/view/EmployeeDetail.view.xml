@@ -1,0 +1,394 @@
+<mvc:View
+    controllerName="smart.hr.portal.controller.EmployeeDetail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+    xmlns:viz="sap.viz"
+    xmlns="sap.m">
+
+    <Page id="employeeDetailPage"
+          title="{i18n>employeeDetails}"
+          showNavButton="true"
+          navButtonPress="onNavBack">
+
+        <content>
+            <ScrollContainer id="employeeDetailScrollContainer" height="100%" width="100%" horizontal="false" vertical="true">
+
+                <!-- Employee Header Profile -->
+                <VBox id="employeeHeaderSection" class="sapUiMediumMargin">
+                    <f:Card id="employeeProfileCard" class="sapUiMediumMarginBottom">
+                        <f:header>
+                            <card:Header id="employeeProfileHeader"
+                                        title="{FirstName} {LastName}"
+                                        subtitle="{Role} - {Department}"
+                                        iconSrc="sap-icon://employee"/>
+                        </f:header>
+                        <f:content>
+                            <HBox id="employeeProfileContent" class="sapUiMediumMargin">
+                                <!-- Employee Avatar and Basic Info -->
+                                <VBox id="employeeAvatarSection" class="sapUiMediumMarginEnd" width="30%">
+                                    <Avatar id="employeeDetailAvatar"
+                                            displaySize="XL"
+                                            initials="{parts: ['FirstName', 'LastName'], formatter: '.formatInitials'}"
+                                            class="sapUiMediumMarginBottom"/>
+                                    <VBox id="employeeStatusBox">
+                                        <ObjectStatus id="employeeStatus"
+                                                     text="{HireType}"
+                                                     state="Success"
+                                                     class="sapUiTinyMarginBottom"/>
+                                        <ObjectStatus id="tenureStatus"
+                                                     text="{parts: ['TenureMonths'], formatter: '.formatTenure'}"
+                                                     state="Information"/>
+                                    </VBox>
+                                </VBox>
+
+                                <!-- Employee Details Grid -->
+                                <VBox id="employeeDetailsGrid" class="sapUiMediumMarginStart" width="70%">
+                                    <Title id="basicInfoTitle" text="{i18n>basicInformation}" level="H3" class="sapUiMediumMarginBottom"/>
+
+                                    <HBox id="employeeDetailsRow1" class="sapUiTinyMarginBottom" wrap="Wrap">
+                                        <VBox id="teamLocationBox" class="sapUiMediumMarginEnd" width="45%">
+                                            <Label id="teamLabel" text="{i18n>team}:" class="sapUiTinyMarginBottom"/>
+                                            <Text id="teamText" text="{Team}" class="sapMText"/>
+                                        </VBox>
+                                        <VBox id="locationBox" width="45%">
+                                            <Label id="locationLabel" text="{i18n>location}:" class="sapUiTinyMarginBottom"/>
+                                            <Text id="locationText" text="{Location}" class="sapMText"/>
+                                        </VBox>
+                                    </HBox>
+
+                                    <HBox id="employeeDetailsRow2" class="sapUiTinyMarginBottom" wrap="Wrap">
+                                        <VBox id="hireDateBox" class="sapUiMediumMarginEnd" width="45%">
+                                            <Label id="hireDateLabel" text="{i18n>hireDate}:" class="sapUiTinyMarginBottom"/>
+                                            <Text id="hireDateText" text="{path: 'HireDate', type: 'sap.ui.model.odata.type.Date'}" class="sapMText"/>
+                                        </VBox>
+                                        <VBox id="hireTypeBox" width="45%">
+                                            <Label id="hireTypeLabel" text="{i18n>hireType}:" class="sapUiTinyMarginBottom"/>
+                                            <Text id="hireTypeText" text="{HireType}" class="sapMText"/>
+                                        </VBox>
+                                    </HBox>
+
+                                    <!-- Quick Stats -->
+                                    <HBox id="quickStatsRow" class="sapUiMediumMarginTop" wrap="Wrap">
+                                        <VBox id="performanceStatBox" class="sapUiMediumMarginEnd" width="30%">
+                                            <Label id="performanceStatLabel" text="{i18n>latestPerformance}:" class="sapUiTinyMarginBottom"/>
+                                            <Text id="performanceStatText"
+                                                  text="{parts: ['PerformanceMetrics'], formatter: '.formatLatestPerformance'}"
+                                                  class="sapMTextLarge"/>
+                                        </VBox>
+                                        <VBox id="satisfactionStatBox" class="sapUiMediumMarginEnd" width="30%">
+                                            <Label id="satisfactionStatLabel" text="{i18n>latestSatisfaction}:" class="sapUiTinyMarginBottom"/>
+                                            <Text id="satisfactionStatText"
+                                                  text="{parts: ['SurveyResponses'], formatter: '.formatLatestSatisfaction'}"
+                                                  class="sapMTextLarge"/>
+                                        </VBox>
+                                        <VBox id="riskStatBox" width="30%">
+                                            <Label id="riskStatLabel" text="{i18n>attritionRisk}:" class="sapUiTinyMarginBottom"/>
+                                            <ObjectStatus id="riskStatStatus"
+                                                         text="{parts: ['AttritionRisk/RiskScore'], formatter: '.formatRiskScore'}"
+                                                         state="{parts: ['AttritionRisk/UrgencyLevel'], formatter: '.formatRiskState'}"/>
+                                        </VBox>
+                                    </HBox>
+                                </VBox>
+                            </HBox>
+                        </f:content>
+                    </f:Card>
+                </VBox>
+
+                <!-- Main Content Sections -->
+                <VBox id="mainContentSection" class="sapUiMediumMargin">
+                    <HBox id="mainContentRow" class="sapUiNoMargin" wrap="Wrap">
+
+                        <!-- Left Column - Performance & History -->
+                        <VBox id="leftContentColumn" class="sapUiMediumMarginEnd" width="48%">
+
+                            <!-- Performance History with Chart -->
+                            <f:Card id="performanceHistoryCard" class="sapUiMediumMarginBottom">
+                                <f:header>
+                                    <card:Header id="performanceHistoryHeader"
+                                                title="{i18n>performanceHistory}"
+                                                iconSrc="sap-icon://line-chart"/>
+                                </f:header>
+                                <f:content>
+                                    <VBox id="performanceHistoryContent" class="sapUiMediumMargin">
+
+                                        <!-- Performance Chart Placeholder -->
+                                        <VBox id="performanceChartContainer" class="sapUiMediumMarginBottom">
+                                            <Title id="performanceChartTitle" text="{i18n>performanceTrendChart}" level="H4" class="sapUiTinyMarginBottom"/>
+
+                                            <!-- VizFrame Chart Placeholder -->
+                                            <Panel id="performanceChartPlaceholder"
+                                                   height="200px"
+                                                   class="sapUiMediumMarginBottom chartPlaceholder">
+                                                <VBox id="chartPlaceholderContent" class="text-center sapUiMediumMargin">
+                                                    <core:Icon id="chartPlaceholderIcon"
+                                                              src="sap-icon://line-chart"
+                                                              size="2rem"
+                                                              color="#666"
+                                                              class="sapUiMediumMarginBottom"/>
+                                                    <Text id="chartPlaceholderText"
+                                                          text="{i18n>performanceChartPlaceholder}"
+                                                          class="sapMTextSmall"/>
+                                                    <Button id="viewChartBtn"
+                                                            text="{i18n>viewInteractiveChart}"
+                                                            press="onViewPerformanceChart"
+                                                            type="Emphasized"
+                                                            class="sapUiTinyMarginTop"/>
+                                                </VBox>
+                                            </Panel>
+                                        </VBox>
+
+                                        <!-- Performance Metrics Table -->
+                                        <Table id="performanceMetricsTable"
+                                               items="{path: 'PerformanceMetrics', parameters: {$orderby: 'Period desc'}}"
+                                               noDataText="{i18n>noPerformanceData}"
+                                               mode="None">
+                                            <headerToolbar>
+                                                <Toolbar id="performanceTableToolbar">
+                                                    <Title id="performanceTableTitle" text="{i18n>recentPerformance}"/>
+                                                </Toolbar>
+                                            </headerToolbar>
+                                            <columns>
+                                                <Column id="periodColumn">
+                                                    <Text id="periodColumnHeader" text="{i18n>period}"/>
+                                                </Column>
+                                                <Column id="completionRateColumn">
+                                                    <Text id="completionRateColumnHeader" text="{i18n>completionRate}"/>
+                                                </Column>
+                                                <Column id="trendColumn">
+                                                    <Text id="trendColumnHeader" text="{i18n>trend}"/>
+                                                </Column>
+                                            </columns>
+                                            <items>
+                                                <ColumnListItem id="performanceMetricItem">
+                                                    <cells>
+                                                        <Text id="periodCell" text="{Period}"/>
+                                                        <ObjectNumber id="completionRateCell"
+                                                                     number="{ObjectiveCompletionRate}"
+                                                                     unit="%"
+                                                                     state="{parts: ['ObjectiveCompletionRate'], formatter: '.formatPerformanceState'}"/>
+                                                        <core:Icon id="trendCell"
+                                                                  src="{parts: ['ObjectiveCompletionRate'], formatter: '.formatTrendIcon'}"
+                                                                  color="{parts: ['ObjectiveCompletionRate'], formatter: '.formatTrendColor'}"/>
+                                                    </cells>
+                                                </ColumnListItem>
+                                            </items>
+                                        </Table>
+                                    </VBox>
+                                </f:content>
+                            </f:Card>
+
+                            <!-- Satisfaction History -->
+                            <f:Card id="satisfactionHistoryCard" class="sapUiMediumMarginBottom">
+                                <f:header>
+                                    <card:Header id="satisfactionHistoryHeader"
+                                                title="{i18n>satisfactionHistory}"
+                                                iconSrc="sap-icon://smiley"/>
+                                </f:header>
+                                <f:content>
+                                    <VBox id="satisfactionHistoryContent" class="sapUiMediumMargin">
+                                        <List id="satisfactionHistoryList"
+                                              items="{path: 'SurveyResponses', parameters: {$orderby: 'SurveyDate desc', $top: 5}}"
+                                              noDataText="{i18n>noSatisfactionData}">
+                                            <StandardListItem id="satisfactionHistoryItem"
+                                                             title="Score: {Score}/100"
+                                                             description="{Comments}"
+                                                             info="{path: 'SurveyDate', type: 'sap.ui.model.odata.type.DateTimeOffset'}"
+                                                             type="Inactive"/>
+                                        </List>
+                                        <Button id="viewAllSatisfactionBtn"
+                                                text="{i18n>viewAllSurveys}"
+                                                press="onViewAllSatisfaction"
+                                                type="Default"
+                                                width="100%"
+                                                class="sapUiTinyMarginTop"/>
+                                    </VBox>
+                                </f:content>
+                            </f:Card>
+
+                        </VBox>
+
+                        <!-- Right Column - AI Insights & Actions -->
+                        <VBox id="rightContentColumn" class="sapUiMediumMarginStart" width="48%">
+
+                            <!-- Attrition Risk Card with Explanation -->
+                            <f:Card id="attritionRiskCard" class="sapUiMediumMarginBottom">
+                                <f:header>
+                                    <card:Header id="attritionRiskHeader"
+                                                title="{i18n>attritionRisk}"
+                                                iconSrc="sap-icon://warning"/>
+                                </f:header>
+                                <f:content>
+                                    <VBox id="attritionRiskContent" class="sapUiMediumMargin">
+                                        <!-- Risk Score Display -->
+                                        <HBox id="riskScoreRow" class="sapUiTinyMarginBottom" alignItems="Center">
+                                            <Label id="riskScoreLabel" text="{i18n>riskScore}:" class="sapUiTinyMarginEnd"/>
+                                            <ObjectNumber id="riskScoreNumber"
+                                                         number="{parts: ['AttritionRisk/RiskScore'], formatter: '.formatRiskPercentage'}"
+                                                         unit="%"
+                                                         state="{parts: ['AttritionRisk/UrgencyLevel'], formatter: '.formatRiskState'}"/>
+                                        </HBox>
+
+                                        <!-- Urgency Level -->
+                                        <HBox id="urgencyLevelRow" class="sapUiTinyMarginBottom" alignItems="Center">
+                                            <Label id="urgencyLevelLabel" text="{i18n>urgencyLevel}:" class="sapUiTinyMarginEnd"/>
+                                            <ObjectStatus id="urgencyLevelStatus"
+                                                         text="{AttritionRisk/UrgencyLevel}"
+                                                         state="{parts: ['AttritionRisk/UrgencyLevel'], formatter: '.formatRiskState'}"/>
+                                        </HBox>
+
+                                        <!-- Last Updated -->
+                                        <HBox id="lastUpdatedRow" class="sapUiMediumMarginBottom" alignItems="Center">
+                                            <Label id="lastUpdatedLabel" text="{i18n>lastUpdated}:" class="sapUiTinyMarginEnd"/>
+                                            <Text id="lastUpdatedText"
+                                                  text="{path: 'AttritionRisk/LastUpdated', type: 'sap.ui.model.odata.type.DateTimeOffset'}"
+                                                  class="sapMTextSmall"/>
+                                        </HBox>
+
+                                        <!-- AI Explanation Section -->
+                                        <VBox id="aiExplanationSection" class="sapUiMediumMarginTop">
+                                            <Title id="aiExplanationTitle" text="{i18n>aiExplanation}" level="H5" class="sapUiTinyMarginBottom"/>
+                                            <Panel id="aiExplanationPanel"
+                                                   expandable="true"
+                                                   expanded="false"
+                                                   headerText="{i18n>viewExplanation}"
+                                                   class="sapUiTinyMarginBottom">
+                                                <VBox id="aiExplanationContent" class="sapUiMediumMargin">
+                                                    <Text id="aiExplanationText"
+                                                          text="{employeeDetail>/attritionExplanation}"
+                                                          class="sapMText"/>
+                                                    <MessageStrip id="aiExplanationNote"
+                                                                 text="{i18n>aiExplanationNote}"
+                                                                 type="Information"
+                                                                 class="sapUiTinyMarginTop"/>
+                                                </VBox>
+                                            </Panel>
+                                            <Button id="explainRiskBtn"
+                                                    text="{i18n>explainRisk}"
+                                                    press="onExplainAttritionRisk"
+                                                    type="Emphasized"
+                                                    width="100%"/>
+                                        </VBox>
+                                    </VBox>
+                                </f:content>
+                            </f:Card>
+
+                            <!-- Training Recommendations -->
+                            <f:Card id="trainingRecommendationsCard" class="sapUiMediumMarginBottom">
+                                <f:header>
+                                    <card:Header id="trainingRecommendationsHeader"
+                                                title="{i18n>trainingRecommendations}"
+                                                iconSrc="sap-icon://learning-assistant"/>
+                                </f:header>
+                                <f:content>
+                                    <VBox id="trainingRecommendationsContent" class="sapUiMediumMargin">
+                                        <List id="trainingRecommendationsList"
+                                              items="{path: 'TrainingRecommendations', parameters: {$orderby: 'GeneratedDate desc', $top: 5}}"
+                                              noDataText="{i18n>noTrainingData}">
+                                            <StandardListItem id="trainingRecommendationItem"
+                                                             title="{Recommendation}"
+                                                             description="{i18n>skillFocus}: {SkillFocus}"
+                                                             info="{i18n>reliability}: {ReliabilityScore}"
+                                                             type="Inactive"/>
+                                        </List>
+                                        <Button id="generateTrainingBtn"
+                                                text="{i18n>generateTraining}"
+                                                press="onGenerateTrainingRecommendations"
+                                                type="Default"
+                                                width="100%"
+                                                class="sapUiTinyMarginTop"/>
+                                    </VBox>
+                                </f:content>
+                            </f:Card>
+
+                            <!-- Feedback Summary with AI -->
+                            <f:Card id="feedbackSummaryCard">
+                                <f:header>
+                                    <card:Header id="feedbackSummaryHeader"
+                                                title="{i18n>feedbackSummary}"
+                                                iconSrc="sap-icon://comment"/>
+                                </f:header>
+                                <f:content>
+                                    <VBox id="feedbackSummaryContent" class="sapUiMediumMargin">
+
+                                        <!-- AI Summary Section -->
+                                        <VBox id="aiSummarySection" class="sapUiMediumMarginBottom">
+                                            <Title id="aiSummaryTitle" text="{i18n>aiGeneratedSummary}" level="H5" class="sapUiTinyMarginBottom"/>
+                                            <Panel id="aiSummaryPanel"
+                                                   expandable="true"
+                                                   expanded="false"
+                                                   headerText="{i18n>viewSummary}"
+                                                   class="sapUiTinyMarginBottom">
+                                                <VBox id="aiSummaryContent" class="sapUiMediumMargin">
+                                                    <Text id="aiSummaryText"
+                                                          text="{employeeDetail>/feedbackSummary}"
+                                                          class="sapMText"/>
+                                                    <MessageStrip id="aiSummaryNote"
+                                                                 text="{i18n>aiSummaryNote}"
+                                                                 type="Information"
+                                                                 class="sapUiTinyMarginTop"/>
+                                                </VBox>
+                                            </Panel>
+                                            <Button id="summarizeFeedbackBtn"
+                                                    text="{i18n>summarizeFeedback}"
+                                                    press="onSummarizeFeedback"
+                                                    type="Emphasized"
+                                                    width="100%"/>
+                                        </VBox>
+
+                                        <!-- Recent Feedback List -->
+                                        <VBox id="recentFeedbackSection">
+                                            <Title id="recentFeedbackTitle" text="{i18n>recentFeedback}" level="H5" class="sapUiTinyMarginBottom"/>
+                                            <List id="recentFeedbackList"
+                                                  items="{path: 'FeedbackReceived', parameters: {$orderby: 'Date desc', $top: 3}}"
+                                                  noDataText="{i18n>noFeedbackData}">
+                                                <StandardListItem id="recentFeedbackItem"
+                                                                 title="{feedback}"
+                                                                 description="{i18n>type}: {Type}"
+                                                                 info="{path: 'Date', type: 'sap.ui.model.odata.type.DateTimeOffset'}"
+                                                                 type="Inactive"/>
+                                            </List>
+                                            <Button id="viewAllFeedbackBtn"
+                                                    text="{i18n>viewAllFeedback}"
+                                                    press="onViewAllFeedback"
+                                                    type="Default"
+                                                    width="100%"
+                                                    class="sapUiTinyMarginTop"/>
+                                        </VBox>
+                                    </VBox>
+                                </f:content>
+                            </f:Card>
+
+                        </VBox>
+                        
+                    </HBox>
+                </VBox>
+                
+            </ScrollContainer>
+        </content>
+
+        <!-- Action Footer -->
+        <footer>
+            <Toolbar id="employeeDetailFooter">
+                <Button id="refreshDataBtn"
+                        icon="sap-icon://refresh"
+                        text="{i18n>refreshData}"
+                        press="onRefreshEmployeeData"
+                        type="Default"/>
+                <ToolbarSpacer id="employeeDetailFooterSpacer"/>
+                <Button id="exportProfileBtn"
+                        icon="sap-icon://download"
+                        text="{i18n>exportProfile}"
+                        press="onExportProfile"
+                        type="Default"/>
+                <Button id="editEmployeeFooterBtn"
+                        icon="sap-icon://edit"
+                        text="{i18n>edit}"
+                        press="onEditEmployee"
+                        type="Emphasized"/>
+            </Toolbar>
+        </footer>
+
+    </Page>
+</mvc:View>

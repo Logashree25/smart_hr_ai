@@ -1,0 +1,332 @@
+<mvc:View
+    controllerName="smart.hr.portal.controller.HiringNeeds"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+    xmlns="sap.m">
+
+    <Page id="hiringNeedsPage" 
+          title="{i18n>hiringNeeds}" 
+          showNavButton="true" 
+          navButtonPress="onNavBack">
+        
+        <!-- Page Header with Summary Stats -->
+        <customHeader>
+            <Bar id="hiringNeedsHeader">
+                <contentLeft>
+                    <Title id="hiringNeedsTitle" text="{i18n>hiringNeeds}" level="H1"/>
+                </contentLeft>
+                <contentMiddle>
+                    <HBox id="hiringStatsSummary" alignItems="Center" class="sapUiMediumMarginBegin">
+                        <VBox id="totalPositionsBox" class="sapUiMediumMarginEnd">
+                            <Label id="totalPositionsLabel" text="{i18n>totalOpenPositions}:" class="sapMTextSmall"/>
+                            <ObjectNumber id="totalPositionsNumber" 
+                                         number="{hiringNeeds>/totalPositions}" 
+                                         state="Information"
+                                         emphasized="true"/>
+                        </VBox>
+                        <VBox id="urgentPositionsBox" class="sapUiMediumMarginEnd">
+                            <Label id="urgentPositionsLabel" text="{i18n>urgentPositions}:" class="sapMTextSmall"/>
+                            <ObjectNumber id="urgentPositionsNumber" 
+                                         number="{hiringNeeds>/urgentPositions}" 
+                                         state="Error"
+                                         emphasized="true"/>
+                        </VBox>
+                        <VBox id="activeRecruitingBox">
+                            <Label id="activeRecruitingLabel" text="{i18n>activeRecruiting}:" class="sapMTextSmall"/>
+                            <ObjectNumber id="activeRecruitingNumber" 
+                                         number="{hiringNeeds>/activeRecruiting}" 
+                                         state="Success"
+                                         emphasized="true"/>
+                        </VBox>
+                    </HBox>
+                </contentMiddle>
+                <contentRight>
+                    <Button id="refreshHiringBtn"
+                            icon="sap-icon://refresh"
+                            tooltip="{i18n>refresh}"
+                            press="onRefreshHiringData"
+                            type="Transparent"/>
+                    <Button id="addPositionBtn"
+                            icon="sap-icon://add"
+                            tooltip="{i18n>addPosition}"
+                            press="onAddPosition"
+                            type="Transparent"/>
+                    <Button id="exportHiringBtn"
+                            icon="sap-icon://excel-attachment"
+                            tooltip="{i18n>export}"
+                            press="onExportHiringData"
+                            type="Transparent"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+        
+        <content>
+            <ScrollContainer id="hiringNeedsScrollContainer" height="100%" width="100%" horizontal="false" vertical="true">
+                
+                <!-- Filter and Search Controls -->
+                <VBox id="hiringFilterSection" class="sapUiMediumMargin">
+                    <HBox id="hiringFilterControls" class="sapUiTinyMarginBottom" wrap="Wrap" alignItems="Center">
+                        
+                        <!-- Search Field -->
+                        <SearchField id="hiringSearchField"
+                                    placeholder="{i18n>searchPositions}"
+                                    search="onSearchPositions"
+                                    width="300px"
+                                    class="sapUiTinyMarginEnd"/>
+                        
+                        <!-- Department Filter -->
+                        <ComboBox id="departmentHiringFilter"
+                                  selectedKey="{hiringNeeds>/filters/department}"
+                                  placeholder="{i18n>filterByDepartment}"
+                                  selectionChange="onDepartmentFilterChange"
+                                  items="{hiringNeeds>/departments}"
+                                  class="sapUiTinyMarginEnd">
+                            <core:Item id="departmentHiringItem" key="{hiringNeeds>}" text="{hiringNeeds>}"/>
+                        </ComboBox>
+                        
+                        <!-- Status Filter -->
+                        <ComboBox id="statusHiringFilter"
+                                  selectedKey="{hiringNeeds>/filters/status}"
+                                  placeholder="{i18n>filterByStatus}"
+                                  selectionChange="onStatusFilterChange"
+                                  class="sapUiTinyMarginEnd">
+                            <core:Item id="openStatusItem" key="" text="{i18n>allStatuses}"/>
+                            <core:Item id="activeStatusItem" key="Active" text="{i18n>activeStatus}"/>
+                            <core:Item id="onHoldStatusItem" key="On Hold" text="{i18n>onHoldStatus}"/>
+                            <core:Item id="filledStatusItem" key="Filled" text="{i18n>filledStatus}"/>
+                            <core:Item id="cancelledStatusItem" key="Cancelled" text="{i18n>cancelledStatus}"/>
+                        </ComboBox>
+                        
+                        <!-- Priority Filter -->
+                        <ComboBox id="priorityHiringFilter"
+                                  selectedKey="{hiringNeeds>/filters/priority}"
+                                  placeholder="{i18n>filterByPriority}"
+                                  selectionChange="onPriorityFilterChange"
+                                  class="sapUiTinyMarginEnd">
+                            <core:Item id="allPriorityItem" key="" text="{i18n>allPriorities}"/>
+                            <core:Item id="urgentPriorityItem" key="Urgent" text="{i18n>urgentPriority}"/>
+                            <core:Item id="highPriorityItem" key="High" text="{i18n>highPriority}"/>
+                            <core:Item id="mediumPriorityItem" key="Medium" text="{i18n>mediumPriority}"/>
+                            <core:Item id="lowPriorityItem" key="Low" text="{i18n>lowPriority}"/>
+                        </ComboBox>
+                        
+                        <Button id="clearHiringFiltersBtn"
+                                icon="sap-icon://clear-filter"
+                                text="{i18n>clearFilters}"
+                                press="onClearHiringFilters"
+                                type="Transparent"/>
+                    </HBox>
+                </VBox>
+                
+                <!-- Open Positions Table -->
+                <VBox id="openPositionsSection" class="sapUiMediumMargin">
+                    <Title id="openPositionsTitle" text="{i18n>openPositionsList}" level="H2" class="sapUiMediumMarginBottom"/>
+                    
+                    <Table id="openPositionsTable"
+                           items="{path: '/OpenPositions', 
+                                   sorter: [{path: 'Level', descending: true}, {path: 'RequiredBy', descending: false}]}"
+                           mode="MultiSelect"
+                           class="sapUiResponsiveMargin"
+                           growing="true"
+                           growingThreshold="50">
+                        
+                        <headerToolbar>
+                            <Toolbar id="openPositionsToolbar">
+                                <Title id="openPositionsTableTitle" text="{i18n>openPositions}"/>
+                                <ToolbarSpacer id="openPositionsToolbarSpacer"/>
+                                <Text id="positionCountText" text="{hiringNeeds>/summaryText}"/>
+                                <Button id="bulkActionsBtn"
+                                        icon="sap-icon://action"
+                                        text="{i18n>bulkActions}"
+                                        press="onBulkActions"
+                                        type="Default"/>
+                            </Toolbar>
+                        </headerToolbar>
+                        
+                        <columns>
+                            <!-- Role Column -->
+                            <Column id="roleColumn" width="20%">
+                                <Text id="roleColumnHeader" text="{i18n>role}"/>
+                            </Column>
+                            
+                            <!-- Department Column -->
+                            <Column id="departmentColumn" width="15%">
+                                <Text id="departmentColumnHeader" text="{i18n>department}"/>
+                            </Column>
+                            
+                            <!-- Required By Column -->
+                            <Column id="requiredByColumn" width="12%">
+                                <Text id="requiredByColumnHeader" text="{i18n>requiredBy}"/>
+                            </Column>
+                            
+                            <!-- Status Column -->
+                            <Column id="statusColumn" width="12%">
+                                <Text id="statusColumnHeader" text="{i18n>status}"/>
+                            </Column>
+                            
+                            <!-- Priority Level Column -->
+                            <Column id="priorityColumn" width="10%">
+                                <Text id="priorityColumnHeader" text="{i18n>priority}"/>
+                            </Column>
+                            
+                            <!-- Additional Info Column -->
+                            <Column id="additionalInfoColumn" width="20%">
+                                <Text id="additionalInfoColumnHeader" text="{i18n>additionalInfo}"/>
+                            </Column>
+                            
+                            <!-- Actions Column -->
+                            <Column id="actionsColumn" width="11%">
+                                <Text id="actionsColumnHeader" text="{i18n>actions}"/>
+                            </Column>
+                        </columns>
+                        
+                        <items>
+                            <ColumnListItem id="openPositionItem" 
+                                           highlight="{parts: ['Level'], formatter: '.formatPriorityHighlight'}"
+                                           press="onPositionPress"
+                                           type="Active">
+                                <cells>
+                                    <!-- Role Cell -->
+                                    <VBox id="roleCell">
+                                        <Text id="roleText" 
+                                              text="{Role}" 
+                                              class="sapMText"/>
+                                        <Text id="positionIdText" 
+                                              text="ID: {ID}" 
+                                              class="sapMTextSmall"/>
+                                    </VBox>
+                                    
+                                    <!-- Department Cell -->
+                                    <VBox id="departmentCell">
+                                        <Text id="departmentText" 
+                                              text="{Department}" 
+                                              class="sapMText"/>
+                                        <Text id="teamText" 
+                                              text="{Team}" 
+                                              class="sapMTextSmall"/>
+                                    </VBox>
+                                    
+                                    <!-- Required By Cell -->
+                                    <VBox id="requiredByCell">
+                                        <Text id="requiredByText" 
+                                              text="{path: 'RequiredBy', type: 'sap.ui.model.odata.type.Date'}" 
+                                              class="sapMText"/>
+                                        <Text id="daysRemainingText" 
+                                              text="{parts: ['RequiredBy'], formatter: '.formatDaysRemaining'}" 
+                                              class="sapMTextSmall"/>
+                                    </VBox>
+                                    
+                                    <!-- Status Cell -->
+                                    <VBox id="statusCell">
+                                        <ObjectStatus id="statusObjectStatus"
+                                                     text="{Status}"
+                                                     state="{parts: ['Status'], formatter: '.formatStatusState'}"/>
+                                        <Text id="statusDateText" 
+                                              text="{path: 'StatusDate', type: 'sap.ui.model.odata.type.Date'}" 
+                                              class="sapMTextSmall"/>
+                                    </VBox>
+                                    
+                                    <!-- Priority Level Cell -->
+                                    <VBox id="priorityCell">
+                                        <ObjectStatus id="priorityObjectStatus"
+                                                     text="{Level}"
+                                                     state="{parts: ['Level'], formatter: '.formatPriorityState'}"/>
+                                        <HBox id="priorityIconBox" alignItems="Center" class="sapUiTinyMarginTop">
+                                            <core:Icon id="priorityIcon"
+                                                      src="{parts: ['Level'], formatter: '.formatPriorityIcon'}"
+                                                      color="{parts: ['Level'], formatter: '.formatPriorityColor'}"
+                                                      size="0.75rem"/>
+                                        </HBox>
+                                    </VBox>
+                                    
+                                    <!-- Additional Info Cell -->
+                                    <VBox id="additionalInfoCell">
+                                        <Text id="locationText" 
+                                              text="{i18n>location}: {Location}" 
+                                              class="sapMTextSmall"/>
+                                        <Text id="experienceText" 
+                                              text="{i18n>experience}: {ExperienceLevel}" 
+                                              class="sapMTextSmall"/>
+                                        <Text id="employmentTypeText" 
+                                              text="{i18n>type}: {EmploymentType}" 
+                                              class="sapMTextSmall"/>
+                                        <Text id="salaryRangeText" 
+                                              text="{i18n>salary}: {parts: ['SalaryMin', 'SalaryMax'], formatter: '.formatSalaryRange'}" 
+                                              class="sapMTextSmall"/>
+                                    </VBox>
+                                    
+                                    <!-- Actions Cell -->
+                                    <HBox id="actionsCell" alignItems="Center">
+                                        <Button id="viewPositionBtn"
+                                                icon="sap-icon://detail-view"
+                                                tooltip="{i18n>viewPosition}"
+                                                press="onViewPosition"
+                                                type="Transparent"
+                                                class="sapUiTinyMarginEnd"/>
+                                        <Button id="editPositionBtn"
+                                                icon="sap-icon://edit"
+                                                tooltip="{i18n>editPosition}"
+                                                press="onEditPosition"
+                                                type="Transparent"
+                                                class="sapUiTinyMarginEnd"/>
+                                        <MenuButton id="moreActionsBtn"
+                                                   icon="sap-icon://overflow"
+                                                   tooltip="{i18n>moreActions}"
+                                                   type="Transparent">
+                                            <menu>
+                                                <Menu id="positionActionsMenu">
+                                                    <MenuItem id="duplicatePositionItem"
+                                                             text="{i18n>duplicatePosition}"
+                                                             icon="sap-icon://duplicate"
+                                                             press="onDuplicatePosition"/>
+                                                    <MenuItem id="closePositionItem"
+                                                             text="{i18n>closePosition}"
+                                                             icon="sap-icon://decline"
+                                                             press="onClosePosition"/>
+                                                    <MenuItem id="sharePositionItem"
+                                                             text="{i18n>sharePosition}"
+                                                             icon="sap-icon://share-2"
+                                                             press="onSharePosition"/>
+                                                </Menu>
+                                            </menu>
+                                        </MenuButton>
+                                    </HBox>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                        
+                        <noData>
+                            <IllustratedMessage id="noHiringDataMessage"
+                                               illustrationType="sapIllus-EmptyList"
+                                               title="{i18n>noOpenPositions}"
+                                               description="{i18n>noOpenPositionsDescription}"/>
+                        </noData>
+                        
+                    </Table>
+                </VBox>
+                
+            </ScrollContainer>
+        </content>
+        
+        <!-- Footer with Hiring Summary -->
+        <footer>
+            <Toolbar id="hiringNeedsFooter">
+                <Text id="hiringSummaryText" text="{hiringNeeds>/footerSummaryText}"/>
+                <ToolbarSpacer id="hiringFooterSpacer"/>
+                <Button id="generateHiringReportBtn"
+                        icon="sap-icon://document"
+                        text="{i18n>generateHiringReport}"
+                        press="onGenerateHiringReport"
+                        type="Default"/>
+                <Button id="requestNewPositionBtn"
+                        icon="sap-icon://add-employee"
+                        text="{i18n>requestNewPosition}"
+                        press="onRequestNewPosition"
+                        type="Emphasized"/>
+            </Toolbar>
+        </footer>
+        
+    </Page>
+</mvc:View>

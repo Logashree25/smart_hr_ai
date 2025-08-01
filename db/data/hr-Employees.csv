@@ -1,0 +1,15 @@
+ID,FirstName,LastName,Role,Department,ManagerID,HireDate,IsKeyTalent
+550e8400-e29b-41d4-a716-446655440001,John,Smith,Engineering Manager,Engineering,,2020-01-15,true
+550e8400-e29b-41d4-a716-446655440002,Sarah,Johnson,Senior Developer,Engineering,550e8400-e29b-41d4-a716-446655440001,2021-03-10,true
+550e8400-e29b-41d4-a716-446655440003,Mike,Brown,Developer,Engineering,550e8400-e29b-41d4-a716-446655440001,2022-06-01,false
+550e8400-e29b-41d4-a716-446655440004,Lisa,Davis,QA Engineer,Engineering,550e8400-e29b-41d4-a716-446655440001,2021-09-15,false
+550e8400-e29b-41d4-a716-446655440005,David,Wilson,HR Manager,Human Resources,,2019-05-20,true
+550e8400-e29b-41d4-a716-446655440006,Emma,Taylor,HR Specialist,Human Resources,550e8400-e29b-41d4-a716-446655440005,2022-01-10,false
+550e8400-e29b-41d4-a716-446655440007,James,Anderson,Marketing Manager,Marketing,,2020-08-12,true
+550e8400-e29b-41d4-a716-446655440008,Anna,Martinez,Marketing Specialist,Marketing,550e8400-e29b-41d4-a716-446655440007,2021-11-05,false
+550e8400-e29b-41d4-a716-446655440009,Robert,Garcia,Sales Manager,Sales,,2019-12-03,true
+550e8400-e29b-41d4-a716-446655440010,Jennifer,Rodriguez,Sales Representative,Sales,550e8400-e29b-41d4-a716-446655440009,2022-04-18,false
+550e8400-e29b-41d4-a716-446655440011,William,Lee,Finance Manager,Finance,,2018-07-25,true
+550e8400-e29b-41d4-a716-446655440012,Jessica,White,Financial Analyst,Finance,550e8400-e29b-41d4-a716-446655440011,2021-08-30,false
+550e8400-e29b-41d4-a716-446655440013,Christopher,Harris,Product Manager,Product,,2020-02-14,true
+550e8400-e29b-41d4-a716-446655440014,Amanda,Clark,Product Owner,Product,550e8400-e29b-41d4-a716-446655440013,2022-03-22,false

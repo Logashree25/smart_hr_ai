@@ -1,0 +1,84 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    
+    <Dialog id="employeeFilterDialog"
+            title="{i18n>filterEmployees}"
+            contentWidth="400px"
+            resizable="true"
+            draggable="true">
+        
+        <content>
+            <VBox id="filterDialogContent" class="sapUiMediumMargin">
+                
+                <!-- Department Filter -->
+                <VBox id="departmentFilterBox" class="sapUiMediumMarginBottom">
+                    <Label id="departmentFilterLabel" text="{i18n>department}:" class="sapUiTinyMarginBottom"/>
+                    <ComboBox id="departmentFilterCombo"
+                              selectedKey="{filter>/department}"
+                              placeholder="{i18n>selectDepartment}"
+                              items="{filter>/departments}">
+                        <core:Item id="departmentFilterItem" key="{filter>}" text="{filter>}"/>
+                    </ComboBox>
+                </VBox>
+                
+                <!-- Role Filter -->
+                <VBox id="roleFilterBox" class="sapUiMediumMarginBottom">
+                    <Label id="roleFilterLabel" text="{i18n>role}:" class="sapUiTinyMarginBottom"/>
+                    <ComboBox id="roleFilterCombo"
+                              selectedKey="{filter>/role}"
+                              placeholder="{i18n>selectRole}"
+                              items="{filter>/roles}">
+                        <core:Item id="roleFilterItem" key="{filter>}" text="{filter>}"/>
+                    </ComboBox>
+                </VBox>
+                
+                <!-- Location Filter -->
+                <VBox id="locationFilterBox" class="sapUiMediumMarginBottom">
+                    <Label id="locationFilterLabel" text="{i18n>location}:" class="sapUiTinyMarginBottom"/>
+                    <ComboBox id="locationFilterCombo"
+                              selectedKey="{filter>/location}"
+                              placeholder="{i18n>selectLocation}"
+                              items="{filter>/locations}">
+                        <core:Item id="locationFilterItem" key="{filter>}" text="{filter>}"/>
+                    </ComboBox>
+                </VBox>
+                
+                <!-- Hire Type Filter -->
+                <VBox id="hireTypeFilterBox" class="sapUiMediumMarginBottom">
+                    <Label id="hireTypeFilterLabel" text="{i18n>hireType}:" class="sapUiTinyMarginBottom"/>
+                    <ComboBox id="hireTypeFilterCombo"
+                              selectedKey="{filter>/hireType}"
+                              placeholder="{i18n>selectHireType}"
+                              items="{filter>/hireTypes}">
+                        <core:Item id="hireTypeFilterItem" key="{filter>}" text="{filter>}"/>
+                    </ComboBox>
+                </VBox>
+                
+                <!-- Filter Summary -->
+                <MessageStrip id="filterSummary"
+                              text="{i18n>filterHelpText}"
+                              type="Information"
+                              class="sapUiMediumMarginTop"/>
+                
+            </VBox>
+        </content>
+        
+        <buttons>
+            <Button id="filterDialogResetBtn"
+                    text="{i18n>reset}"
+                    press="onFilterDialogReset"
+                    type="Default"/>
+            <Button id="filterDialogCancelBtn"
+                    text="{i18n>cancel}"
+                    press="onFilterDialogCancel"
+                    type="Default"/>
+            <Button id="filterDialogConfirmBtn"
+                    text="{i18n>apply}"
+                    press="onFilterDialogConfirm"
+                    type="Emphasized"/>
+        </buttons>
+        
+    </Dialog>
+    
+</core:FragmentDefinition>

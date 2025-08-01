@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Smart HR Portal Test</title>
+    <script
+        id="sap-ui-bootstrap"
+        src="https://ui5.sap.com/resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_horizon"
+        data-sap-ui-resourceroots='{
+            "smart.hr.portal": "./"
+        }'
+        data-sap-ui-compatVersion="edge"
+        data-sap-ui-async="true"
+        data-sap-ui-frameOptions="trusted"
+        data-sap-ui-bindingSyntax="complex">
+    </script>
+</head>
+<body class="sapUiBody" id="content">
+    <div id="test-content">
+        <h1>Smart HR Portal Test</h1>
+        <p>Testing basic UI5 setup...</p>
+        <div id="test-button"></div>
+    </div>
+    
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            console.log("UI5 Core initialized successfully!");
+            
+            // Create a simple button to test
+            sap.ui.require([
+                "sap/m/Button",
+                "sap/m/MessageToast"
+            ], function(Button, MessageToast) {
+                var oButton = new Button({
+                    text: "Test Button",
+                    press: function() {
+                        MessageToast.show("UI5 is working!");
+                    }
+                });
+                
+                oButton.placeAt("test-button");
+                console.log("Test button created successfully!");
+            });
+        });
+    </script>
+</body>
+</html>

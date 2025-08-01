@@ -1,0 +1,26 @@
+/* Smart HR Portal Custom Styles */
+
+.smartHRPortal {
+    font-family: "72", "72full", Arial, Helvetica, sans-serif;
+}
+
+/* Card hover effects */
+.sapFCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+/* KPI styling */
+.sapMObjectNumber {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .sapFCard {
+        width: 100% !important;
+        margin-bottom: 1rem;
+    }
+}

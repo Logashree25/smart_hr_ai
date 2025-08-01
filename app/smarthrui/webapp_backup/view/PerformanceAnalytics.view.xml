@@ -1,0 +1,331 @@
+<mvc:View
+    controllerName="smart.hr.portal.controller.PerformanceAnalytics"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+    xmlns:viz="sap.viz"
+    xmlns="sap.m">
+
+    <Page id="performanceAnalyticsPage" 
+          title="{i18n>performanceAnalytics}" 
+          showNavButton="true" 
+          navButtonPress="onNavBack">
+        
+        <!-- Page Header with Controls -->
+        <customHeader>
+            <Bar id="performanceAnalyticsHeader">
+                <contentLeft>
+                    <Title id="performanceAnalyticsTitle" text="{i18n>performanceAnalytics}" level="H1"/>
+                </contentLeft>
+                <contentMiddle>
+                    <HBox id="analyticsControlsBox" alignItems="Center" class="sapUiMediumMarginBegin">
+                        <Label id="timeRangeLabel" text="{i18n>timeRange}:" class="sapUiTinyMarginEnd"/>
+                        <ComboBox id="timeRangeCombo"
+                                  selectedKey="{performanceAnalytics>/timeRange}"
+                                  selectionChange="onTimeRangeChange"
+                                  class="sapUiTinyMarginEnd">
+                            <core:Item id="last3MonthsItem" key="3" text="{i18n>last3Months}"/>
+                            <core:Item id="last6MonthsItem" key="6" text="{i18n>last6Months}"/>
+                            <core:Item id="last12MonthsItem" key="12" text="{i18n>last12Months}"/>
+                            <core:Item id="last24MonthsItem" key="24" text="{i18n>last24Months}"/>
+                        </ComboBox>
+                        
+                        <Label id="viewTypeLabel" text="{i18n>viewType}:" class="sapUiTinyMarginEnd"/>
+                        <SegmentedButton id="viewTypeSegmented" 
+                                        selectedKey="{performanceAnalytics>/viewType}"
+                                        selectionChange="onViewTypeChange">
+                            <items>
+                                <SegmentedButtonItem id="departmentViewItem" key="department" text="{i18n>byDepartment}"/>
+                                <SegmentedButtonItem id="teamViewItem" key="team" text="{i18n>byTeam}"/>
+                                <SegmentedButtonItem id="individualViewItem" key="individual" text="{i18n>byIndividual}"/>
+                            </items>
+                        </SegmentedButton>
+                    </HBox>
+                </contentMiddle>
+                <contentRight>
+                    <Button id="refreshAnalyticsBtn"
+                            icon="sap-icon://refresh"
+                            tooltip="{i18n>refresh}"
+                            press="onRefreshAnalytics"
+                            type="Transparent"/>
+                    <Button id="exportAnalyticsBtn"
+                            icon="sap-icon://excel-attachment"
+                            tooltip="{i18n>export}"
+                            press="onExportAnalytics"
+                            type="Transparent"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+        
+        <content>
+            <ScrollContainer id="performanceAnalyticsScrollContainer" height="100%" width="100%" horizontal="false" vertical="true">
+                
+                <!-- Summary KPI Cards -->
+                <VBox id="summaryKPISection" class="sapUiMediumMargin">
+                    <Title id="summaryKPITitle" text="{i18n>performanceSummary}" level="H2" class="sapUiMediumMarginBottom"/>
+                    
+                    <HBox id="summaryKPICards" wrap="Wrap" class="sapUiNoMargin">
+                        
+                        <!-- Overall Completion Rate Card -->
+                        <f:Card id="overallCompletionCard" class="sapUiMediumMarginEnd sapUiMediumMarginBottom" width="300px">
+                            <f:header>
+                                <card:Header id="overallCompletionHeader" 
+                                            title="{i18n>overallCompletionRate}" 
+                                            iconSrc="sap-icon://performance"/>
+                            </f:header>
+                            <f:content>
+                                <VBox id="overallCompletionContent" class="sapUiMediumMargin" alignItems="Center">
+                                    <ObjectNumber id="overallCompletionNumber" 
+                                                 number="{performanceAnalytics>/overallCompletionRate}" 
+                                                 unit="%"
+                                                 state="{parts: ['performanceAnalytics>/overallCompletionRate'], formatter: '.formatPerformanceState'}"
+                                                 emphasized="true"
+                                                 class="sapUiLargeMarginBottom"/>
+                                    <HBox id="overallTrendBox" alignItems="Center">
+                                        <core:Icon id="overallTrendIcon"
+                                                  src="{parts: ['performanceAnalytics>/overallTrend'], formatter: '.formatTrendIcon'}"
+                                                  color="{parts: ['performanceAnalytics>/overallTrend'], formatter: '.formatTrendColor'}"
+                                                  class="sapUiTinyMarginEnd"/>
+                                        <Text id="overallTrendText" text="{performanceAnalytics>/overallTrendText}"/>
+                                    </HBox>
+                                </VBox>
+                            </f:content>
+                        </f:Card>
+                        
+                        <!-- Top Performing Department Card -->
+                        <f:Card id="topDepartmentCard" class="sapUiMediumMarginEnd sapUiMediumMarginBottom" width="300px">
+                            <f:header>
+                                <card:Header id="topDepartmentHeader" 
+                                            title="{i18n>topPerformingDepartment}" 
+                                            iconSrc="sap-icon://org-chart"/>
+                            </f:header>
+                            <f:content>
+                                <VBox id="topDepartmentContent" class="sapUiMediumMargin">
+                                    <Text id="topDepartmentName" 
+                                          text="{performanceAnalytics>/topDepartment/name}" 
+                                          class="sapMTextLarge sapUiMediumMarginBottom"/>
+                                    <ObjectNumber id="topDepartmentScore" 
+                                                 number="{performanceAnalytics>/topDepartment/score}" 
+                                                 unit="%"
+                                                 state="Success"
+                                                 emphasized="true"/>
+                                </VBox>
+                            </f:content>
+                        </f:Card>
+                        
+                        <!-- Improvement Needed Card -->
+                        <f:Card id="improvementNeededCard" class="sapUiMediumMarginBottom" width="300px">
+                            <f:header>
+                                <card:Header id="improvementNeededHeader" 
+                                            title="{i18n>needsImprovement}" 
+                                            iconSrc="sap-icon://warning"/>
+                            </f:header>
+                            <f:content>
+                                <VBox id="improvementNeededContent" class="sapUiMediumMargin">
+                                    <Text id="improvementDepartmentName" 
+                                          text="{performanceAnalytics>/improvementDepartment/name}" 
+                                          class="sapMTextLarge sapUiMediumMarginBottom"/>
+                                    <ObjectNumber id="improvementDepartmentScore" 
+                                                 number="{performanceAnalytics>/improvementDepartment/score}" 
+                                                 unit="%"
+                                                 state="Error"
+                                                 emphasized="true"/>
+                                </VBox>
+                            </f:content>
+                        </f:Card>
+                        
+                    </HBox>
+                </VBox>
+                
+                <!-- Main Charts Section -->
+                <VBox id="mainChartsSection" class="sapUiMediumMargin">
+                    
+                    <!-- Department/Team Performance Chart -->
+                    <f:Card id="performanceTrendsCard" class="sapUiMediumMarginBottom">
+                        <f:header>
+                            <card:Header id="performanceTrendsHeader" 
+                                        title="{parts: ['performanceAnalytics>/viewType'], formatter: '.formatChartTitle'}" 
+                                        iconSrc="sap-icon://line-chart"/>
+                        </f:header>
+                        <f:content>
+                            <VBox id="performanceTrendsContent" class="sapUiMediumMargin">
+                                
+                                <!-- Chart Controls -->
+                                <HBox id="chartControlsBox" class="sapUiMediumMarginBottom" alignItems="Center">
+                                    <Label id="chartTypeLabel" text="{i18n>chartType}:" class="sapUiTinyMarginEnd"/>
+                                    <SegmentedButton id="chartTypeSegmented" 
+                                                    selectedKey="{performanceAnalytics>/chartType}"
+                                                    selectionChange="onChartTypeChange">
+                                        <items>
+                                            <SegmentedButtonItem id="lineChartItem" key="line" text="{i18n>lineChart}"/>
+                                            <SegmentedButtonItem id="barChartItem" key="column" text="{i18n>barChart}"/>
+                                            <SegmentedButtonItem id="combinationChartItem" key="combination" text="{i18n>combinationChart}"/>
+                                        </items>
+                                    </SegmentedButton>
+                                </HBox>
+                                
+                                <!-- VizFrame Chart -->
+                                <viz:VizFrame id="performanceTrendsVizFrame"
+                                             vizType="{performanceAnalytics>/chartType}"
+                                             width="100%"
+                                             height="400px"
+                                             vizProperties="{performanceAnalytics>/vizProperties}"
+                                             selectData="onChartSelectData">
+                                    <viz:dataset>
+                                        <viz:FlattenedDataset id="performanceDataset" data="{performanceAnalytics>/chartData}">
+                                            <viz:dimensions>
+                                                <viz:DimensionDefinition id="periodDimension" name="Period" value="{Period}"/>
+                                                <viz:DimensionDefinition id="categoryDimension" name="Category" value="{Category}"/>
+                                            </viz:dimensions>
+                                            <viz:measures>
+                                                <viz:MeasureDefinition id="completionRateMeasure" name="Completion Rate" value="{CompletionRate}"/>
+                                                <viz:MeasureDefinition id="targetMeasure" name="Target" value="{Target}"/>
+                                            </viz:measures>
+                                        </viz:FlattenedDataset>
+                                    </viz:dataset>
+                                    
+                                    <viz:feeds>
+                                        <viz:FeedItem id="categoryAxisFeed" uid="categoryAxis" type="Dimension" values="Period"/>
+                                        <viz:FeedItem id="colorFeed" uid="color" type="Dimension" values="Category"/>
+                                        <viz:FeedItem id="valueAxisFeed" uid="valueAxis" type="Measure" values="Completion Rate"/>
+                                        <viz:FeedItem id="valueAxis2Feed" uid="valueAxis2" type="Measure" values="Target"/>
+                                    </viz:feeds>
+                                </viz:VizFrame>
+                                
+                                <!-- Chart Legend and Info -->
+                                <HBox id="chartLegendBox" class="sapUiMediumMarginTop" justifyContent="SpaceBetween" alignItems="Center">
+                                    <VBox id="chartInfoBox">
+                                        <Text id="chartInfoText" text="{performanceAnalytics>/chartInfo}" class="sapMTextSmall"/>
+                                        <Text id="lastUpdatedChartText" 
+                                              text="{i18n>lastUpdated}: {performanceAnalytics>/lastUpdated}" 
+                                              class="sapMTextSmall"/>
+                                    </VBox>
+                                    <HBox id="chartActionsBox">
+                                        <Button id="fullScreenChartBtn"
+                                                icon="sap-icon://full-screen"
+                                                tooltip="{i18n>fullScreen}"
+                                                press="onFullScreenChart"
+                                                type="Transparent"/>
+                                        <Button id="downloadChartBtn"
+                                                icon="sap-icon://download"
+                                                tooltip="{i18n>downloadChart}"
+                                                press="onDownloadChart"
+                                                type="Transparent"/>
+                                    </HBox>
+                                </HBox>
+                                
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+                    
+                    <!-- Detailed Performance Table -->
+                    <f:Card id="detailedPerformanceCard">
+                        <f:header>
+                            <card:Header id="detailedPerformanceHeader" 
+                                        title="{i18n>detailedPerformanceData}" 
+                                        iconSrc="sap-icon://table-view"/>
+                        </f:header>
+                        <f:content>
+                            <Table id="performanceDataTable"
+                                   items="{performanceAnalytics>/tableData}"
+                                   mode="MultiSelect"
+                                   class="sapUiResponsiveMargin">
+                                
+                                <headerToolbar>
+                                    <Toolbar id="performanceTableToolbar">
+                                        <Title id="performanceTableTitle" text="{i18n>performanceBreakdown}"/>
+                                        <ToolbarSpacer id="performanceTableSpacer"/>
+                                        <Button id="exportTableBtn"
+                                                icon="sap-icon://excel-attachment"
+                                                text="{i18n>exportTable}"
+                                                press="onExportTable"
+                                                type="Default"/>
+                                    </Toolbar>
+                                </headerToolbar>
+                                
+                                <columns>
+                                    <Column id="categoryColumn">
+                                        <Text id="categoryColumnHeader" text="{parts: ['performanceAnalytics>/viewType'], formatter: '.formatCategoryColumnHeader'}"/>
+                                    </Column>
+                                    <Column id="currentPeriodColumn">
+                                        <Text id="currentPeriodColumnHeader" text="{i18n>currentPeriod}"/>
+                                    </Column>
+                                    <Column id="previousPeriodColumn">
+                                        <Text id="previousPeriodColumnHeader" text="{i18n>previousPeriod}"/>
+                                    </Column>
+                                    <Column id="changeColumn">
+                                        <Text id="changeColumnHeader" text="{i18n>change}"/>
+                                    </Column>
+                                    <Column id="trendColumn">
+                                        <Text id="trendColumnHeader" text="{i18n>trend}"/>
+                                    </Column>
+                                    <Column id="employeeCountColumn">
+                                        <Text id="employeeCountColumnHeader" text="{i18n>employeeCount}"/>
+                                    </Column>
+                                </columns>
+                                
+                                <items>
+                                    <ColumnListItem id="performanceDataItem">
+                                        <cells>
+                                            <Text id="categoryCell" text="{Category}"/>
+                                            <ObjectNumber id="currentPeriodCell" 
+                                                         number="{CurrentPeriod}" 
+                                                         unit="%"
+                                                         state="{parts: ['CurrentPeriod'], formatter: '.formatPerformanceState'}"/>
+                                            <ObjectNumber id="previousPeriodCell" 
+                                                         number="{PreviousPeriod}" 
+                                                         unit="%"
+                                                         state="{parts: ['PreviousPeriod'], formatter: '.formatPerformanceState'}"/>
+                                            <ObjectNumber id="changeCell" 
+                                                         number="{Change}" 
+                                                         unit="%"
+                                                         state="{parts: ['Change'], formatter: '.formatChangeState'}"/>
+                                            <HBox id="trendCell" alignItems="Center">
+                                                <core:Icon id="trendCellIcon"
+                                                          src="{parts: ['Change'], formatter: '.formatTrendIcon'}"
+                                                          color="{parts: ['Change'], formatter: '.formatTrendColor'}"
+                                                          class="sapUiTinyMarginEnd"/>
+                                                <Text id="trendCellText" text="{parts: ['Change'], formatter: '.formatTrendText'}"/>
+                                            </HBox>
+                                            <Text id="employeeCountCell" text="{EmployeeCount}"/>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                                
+                                <noData>
+                                    <IllustratedMessage id="noPerformanceDataMessage"
+                                                        illustrationType="sapIllus-EmptyList"
+                                                        title="{i18n>noPerformanceData}"
+                                                        description="{i18n>noPerformanceDataDescription}"/>
+                                </noData>
+                                
+                            </Table>
+                        </f:content>
+                    </f:Card>
+                    
+                </VBox>
+                
+            </ScrollContainer>
+        </content>
+        
+        <!-- Footer with Analytics Summary -->
+        <footer>
+            <Toolbar id="performanceAnalyticsFooter">
+                <Text id="analyticsSummaryText" text="{performanceAnalytics>/summaryText}"/>
+                <ToolbarSpacer id="analyticsFooterSpacer"/>
+                <Button id="generateReportBtn"
+                        icon="sap-icon://document"
+                        text="{i18n>generateReport}"
+                        press="onGenerateReport"
+                        type="Default"/>
+                <Button id="scheduleReportBtn"
+                        icon="sap-icon://appointment-2"
+                        text="{i18n>scheduleReport}"
+                        press="onScheduleReport"
+                        type="Emphasized"/>
+            </Toolbar>
+        </footer>
+        
+    </Page>
+</mvc:View>

@@ -1,0 +1,259 @@
+{
+  "_version": "1.65.0",
+  "sap.app": {
+    "id": "smart.hr.portal",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "1.0.0"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.14.4",
+      "toolsId": "e9bdaa98-2244-4687-b347-b71c1c9110d0"
+    },
+    "dataSources": {
+      "hrService": {
+        "uri": "/hr/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "4.0"
+        }
+      },
+      "genaiService": {
+        "uri": "/genai/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/genai-metadata.xml",
+          "odataVersion": "4.0"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "smart-hr-portal-display": {
+          "semanticObject": "SmartHR",
+          "action": "display",
+          "title": "{{flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.f": {},
+        "sap.suite.ui.commons": {},
+        "sap.ui.comp": {},
+        "sap.ui.generic.app": {},
+        "sap.ui.table": {},
+        "sap.ushell": {}
+      }
+    },
+    "models": {
+      "i18n": {
+        "dataSource": "i18n",
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "smart.hr.portal.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "hrService",
+        "type": "sap.ui.model.odata.v4.ODataModel",
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true,
+          "groupId": "$direct",
+          "synchronizationMode": "None"
+        }
+      },
+      "genai": {
+        "dataSource": "genaiService",
+        "type": "sap.ui.model.odata.v4.ODataModel",
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true,
+          "groupId": "$direct",
+          "synchronizationMode": "None"
+        }
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "smart.hr.portal.view",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "clearControlAggregation": false
+      },
+      "routes": [
+        {
+          "name": "RouteDashboard",
+          "pattern": ":?query:",
+          "target": [
+            "TargetDashboard"
+          ]
+        },
+        {
+          "name": "RouteEmployeeDetail",
+          "pattern": "employee/{employeeId}:?query:",
+          "target": [
+            "TargetEmployeeDetail"
+          ]
+        },
+        {
+          "name": "RouteAnalytics",
+          "pattern": "analytics:?query:",
+          "target": [
+            "TargetAnalytics"
+          ]
+        },
+        {
+          "name": "RouteEmployeeList",
+          "pattern": "employees:?query:",
+          "target": [
+            "TargetEmployeeList"
+          ]
+        },
+        {
+          "name": "RouteAttritionMonitor",
+          "pattern": "attrition-monitor:?query:",
+          "target": [
+            "TargetAttritionMonitor"
+          ]
+        },
+        {
+          "name": "RoutePerformanceAnalytics",
+          "pattern": "performance-analytics:?query:",
+          "target": [
+            "TargetPerformanceAnalytics"
+          ]
+        },
+        {
+          "name": "RouteHiringNeeds",
+          "pattern": "hiring-needs:?query:",
+          "target": [
+            "TargetHiringNeeds"
+          ]
+        },
+        {
+          "name": "RouteAISuggestions",
+          "pattern": "ai-suggestions:?query:",
+          "target": [
+            "TargetAISuggestions"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetDashboard": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "Dashboard",
+          "viewName": "Dashboard"
+        },
+        "TargetEmployeeDetail": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "EmployeeDetail",
+          "viewName": "EmployeeDetail"
+        },
+        "TargetAnalytics": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "Analytics",
+          "viewName": "Analytics"
+        },
+        "TargetEmployeeList": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "EmployeeList",
+          "viewName": "EmployeeList"
+        },
+        "TargetAttritionMonitor": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "AttritionMonitor",
+          "viewName": "AttritionMonitor"
+        },
+        "TargetPerformanceAnalytics": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "PerformanceAnalytics",
+          "viewName": "PerformanceAnalytics"
+        },
+        "TargetHiringNeeds": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "HiringNeeds",
+          "viewName": "HiringNeeds"
+        },
+        "TargetAISuggestions": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "AISuggestions",
+          "viewName": "AISuggestions"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "smart.hr.portal.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "App"
+    }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "smart.hr.portal"
+  }
+}

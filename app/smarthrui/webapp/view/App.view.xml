@@ -1,0 +1,10 @@
+<mvc:View
+    controllerName="smart.hr.portal.controller.App"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m">
+    
+    <App id="app">
+        <!-- Pages will be added here by the router -->
+    </App>
+</mvc:View>

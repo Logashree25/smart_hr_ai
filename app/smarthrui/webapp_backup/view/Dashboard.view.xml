@@ -1,0 +1,107 @@
+<mvc:View
+    controllerName="smart.hr.portal.controller.Dashboard"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+    xmlns="sap.m">
+
+    <Page id="dashboardPage" title="Smart HR Dashboard" showNavButton="false">
+        <content>
+            <VBox id="mainContent" class="sapUiMediumMargin">
+                
+                <!-- Header -->
+                <Title id="dashboardTitle" text="Smart HR Dashboard" level="H1" class="sapUiMediumMarginBottom"/>
+                <Text id="welcomeText" text="Welcome to the Smart HR Portal" class="sapUiMediumMarginBottom"/>
+                
+                <!-- KPI Cards -->
+                <HBox id="kpiContainer" wrap="Wrap" class="sapUiMediumMarginBottom">
+                    
+                    <!-- Employee Satisfaction Card -->
+                    <f:Card id="satisfactionCard" width="300px" class="sapUiTinyMargin">
+                        <f:header>
+                            <card:Header id="satisfactionHeader" title="Employee Satisfaction" iconSrc="sap-icon://smiley"/>
+                        </f:header>
+                        <f:content>
+                            <VBox id="satisfactionContent" alignItems="Center" class="sapUiMediumMargin">
+                                <ObjectNumber id="satisfactionNumber" 
+                                            number="{dashboard>/satisfactionScore}" 
+                                            unit="/10"
+                                            emphasized="true"
+                                            state="Success"/>
+                                <Text id="satisfactionText" text="Average Score" class="sapUiTinyText"/>
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+                    
+                    <!-- Total Employees Card -->
+                    <f:Card id="employeesCard" width="300px" class="sapUiTinyMargin">
+                        <f:header>
+                            <card:Header id="employeesHeader" title="Total Employees" iconSrc="sap-icon://group"/>
+                        </f:header>
+                        <f:content>
+                            <VBox id="employeesContent" alignItems="Center" class="sapUiMediumMargin">
+                                <ObjectNumber id="employeesNumber" 
+                                            number="{dashboard>/totalEmployees}" 
+                                            emphasized="true"
+                                            state="Information"/>
+                                <Text id="employeesText" text="Active Workforce" class="sapUiTinyText"/>
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+                    
+                    <!-- Attrition Risk Card -->
+                    <f:Card id="attritionCard" width="300px" class="sapUiTinyMargin">
+                        <f:header>
+                            <card:Header id="attritionHeader" title="Attrition Risk" iconSrc="sap-icon://warning"/>
+                        </f:header>
+                        <f:content>
+                            <VBox id="attritionContent" alignItems="Center" class="sapUiMediumMargin">
+                                <ObjectNumber id="attritionNumber" 
+                                            number="{dashboard>/attritionRiskPercent}" 
+                                            unit="%"
+                                            emphasized="true"
+                                            state="Error"/>
+                                <Text id="attritionText" text="High Risk" class="sapUiTinyText"/>
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+                    
+                </HBox>
+                
+                <!-- AI Insights Section -->
+                <f:Card id="aiInsightsCard" class="sapUiMediumMarginTop">
+                    <f:header>
+                        <card:Header id="aiInsightsHeader" title="AI Insights" iconSrc="sap-icon://artificial-intelligence"/>
+                    </f:header>
+                    <f:content>
+                        <VBox id="aiInsightsContent" class="sapUiMediumMargin">
+                            <Text id="aiStatusText" text="AI Status: {aiSuggestions>/aiStatus}" class="sapUiMediumMarginBottom"/>
+                            <Text id="aiSummaryText" text="Total Suggestions: {aiSuggestions>/totalSuggestions}" class="sapUiMediumMarginBottom"/>
+                            <Button id="generateInsightsBtn" text="Generate AI Insights" press="onGenerateAIInsights" type="Emphasized"/>
+                        </VBox>
+                    </f:content>
+                </f:Card>
+                
+                <!-- Employee Data Section -->
+                <f:Card id="employeeDataCard" class="sapUiMediumMarginTop">
+                    <f:header>
+                        <card:Header id="employeeDataHeader" title="Recent Employees" iconSrc="sap-icon://employee"/>
+                    </f:header>
+                    <f:content>
+                        <VBox id="employeeDataContent" class="sapUiMediumMargin">
+                            <List id="employeeList" items="{/Employee}" noDataText="No employee data available">
+                                <StandardListItem id="employeeItem" 
+                                                title="{FirstName} {LastName}" 
+                                                description="{Department} - {Position}"
+                                                info="{Status}"
+                                                press="onEmployeePress"/>
+                            </List>
+                        </VBox>
+                    </f:content>
+                </f:Card>
+                
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

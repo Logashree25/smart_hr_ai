@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:DataServices>
+    <Schema Namespace="HRService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityContainer Name="EntityContainer">
+        <EntitySet Name="Employee" EntityType="HRService.Employee"/>
+        <EntitySet Name="SatisfactionSurvey" EntityType="HRService.SatisfactionSurvey"/>
+        <EntitySet Name="Feedback" EntityType="HRService.Feedback"/>
+        <EntitySet Name="PerformanceMetrics" EntityType="HRService.PerformanceMetrics"/>
+        <EntitySet Name="AttritionRisk" EntityType="HRService.AttritionRisk"/>
+        <EntitySet Name="OpenPosition" EntityType="HRService.OpenPosition"/>
+        <EntitySet Name="TrainingRecommendation" EntityType="HRService.TrainingRecommendation"/>
+        <EntitySet Name="EngagementIdea" EntityType="HRService.EngagementIdea"/>
+        <EntitySet Name="PolicyEnhancement" EntityType="HRService.PolicyEnhancement"/>
+      </EntityContainer>
+      
+      <EntityType Name="Employee">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" Nullable="false"/>
+        <Property Name="FirstName" Type="Edm.String"/>
+        <Property Name="LastName" Type="Edm.String"/>
+        <Property Name="Department" Type="Edm.String"/>
+        <Property Name="Position" Type="Edm.String"/>
+        <Property Name="Status" Type="Edm.String"/>
+        <Property Name="HireDate" Type="Edm.Date"/>
+        <Property Name="Location" Type="Edm.String"/>
+        <Property Name="SatisfactionScore" Type="Edm.Decimal"/>
+      </EntityType>
+      
+      <EntityType Name="SatisfactionSurvey">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" Nullable="false"/>
+        <Property Name="EmployeeID" Type="Edm.String"/>
+        <Property Name="SurveyDate" Type="Edm.Date"/>
+        <Property Name="OverallSatisfaction" Type="Edm.Decimal"/>
+        <Property Name="WorkLifeBalance" Type="Edm.Decimal"/>
+        <Property Name="CareerDevelopment" Type="Edm.Decimal"/>
+        <Property Name="Management" Type="Edm.Decimal"/>
+      </EntityType>
+      
+      <EntityType Name="Feedback">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" Nullable="false"/>
+        <Property Name="EmployeeID" Type="Edm.String"/>
+        <Property Name="FeedbackDate" Type="Edm.Date"/>
+        <Property Name="Type" Type="Edm.String"/>
+        <Property Name="Content" Type="Edm.String"/>
+        <Property Name="Sentiment" Type="Edm.String"/>
+      </EntityType>
+      
+      <EntityType Name="PerformanceMetrics">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" Nullable="false"/>
+        <Property Name="EmployeeID" Type="Edm.String"/>
+        <Property Name="Period" Type="Edm.String"/>
+        <Property Name="CompletionRate" Type="Edm.Decimal"/>
+        <Property Name="QualityScore" Type="Edm.Decimal"/>
+        <Property Name="GoalsAchieved" Type="Edm.Int32"/>
+      </EntityType>
+      
+      <EntityType Name="AttritionRisk">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" Nullable="false"/>
+        <Property Name="EmployeeID" Type="Edm.String"/>
+        <Property Name="RiskLevel" Type="Edm.String"/>
+        <Property Name="RiskScore" Type="Edm.Decimal"/>
+        <Property Name="RiskFactors" Type="Edm.String"/>
+        <Property Name="UrgencyLevel" Type="Edm.String"/>
+      </EntityType>
+      
+      <EntityType Name="OpenPosition">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" Nullable="false"/>
+        <Property Name="Title" Type="Edm.String"/>
+        <Property Name="Department" Type="Edm.String"/>
+        <Property Name="Status" Type="Edm.String"/>
+        <Property Name="Priority" Type="Edm.String"/>
+        <Property Name="RequiredBy" Type="Edm.Date"/>
+        <Property Name="Location" Type="Edm.String"/>
+      </EntityType>
+      
+      <EntityType Name="TrainingRecommendation">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" Nullable="false"/>
+        <Property Name="Title" Type="Edm.String"/>
+        <Property Name="TargetAudience" Type="Edm.String"/>
+        <Property Name="Department" Type="Edm.String"/>
+        <Property Name="SkillGap" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Source" Type="Edm.String"/>
+        <Property Name="Context" Type="Edm.String"/>
+        <Property Name="Confidence" Type="Edm.Int32"/>
+        <Property Name="Impact" Type="Edm.String"/>
+        <Property Name="Status" Type="Edm.String"/>
+      </EntityType>
+      
+      <EntityType Name="EngagementIdea">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" Nullable="false"/>
+        <Property Name="Title" Type="Edm.String"/>
+        <Property Name="Category" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Source" Type="Edm.String"/>
+        <Property Name="Context" Type="Edm.String"/>
+        <Property Name="Confidence" Type="Edm.Int32"/>
+        <Property Name="Impact" Type="Edm.String"/>
+        <Property Name="Status" Type="Edm.String"/>
+      </EntityType>
+      
+      <EntityType Name="PolicyEnhancement">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" Nullable="false"/>
+        <Property Name="Title" Type="Edm.String"/>
+        <Property Name="PolicyArea" Type="Edm.String"/>
+        <Property Name="CurrentPolicy" Type="Edm.String"/>
+        <Property Name="ProposedChange" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Source" Type="Edm.String"/>
+        <Property Name="Context" Type="Edm.String"/>
+        <Property Name="Confidence" Type="Edm.Int32"/>
+        <Property Name="Impact" Type="Edm.String"/>
+        <Property Name="Status" Type="Edm.String"/>
+      </EntityType>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

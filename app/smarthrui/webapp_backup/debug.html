@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Smart HR Portal Debug</title>
+    <script
+        id="sap-ui-bootstrap"
+        src="https://ui5.sap.com/resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_horizon"
+        data-sap-ui-resourceroots='{
+            "smart.hr.portal": "./"
+        }'
+        data-sap-ui-compatVersion="edge"
+        data-sap-ui-async="true"
+        data-sap-ui-frameOptions="trusted"
+        data-sap-ui-bindingSyntax="complex"
+        data-sap-ui-debug="true">
+    </script>
+</head>
+<body class="sapUiBody" id="content">
+    <div id="debug-info">
+        <h1>Smart HR Portal Debug</h1>
+        <div id="status">Initializing...</div>
+        <div id="logs"></div>
+    </div>
+    
+    <div id="app-container"></div>
+    
+    <script>
+        var logs = [];
+        
+        function addLog(message) {
+            logs.push(new Date().toLocaleTimeString() + ": " + message);
+            var logsDiv = document.getElementById("logs");
+            if (logsDiv) {
+                logsDiv.innerHTML = logs.map(function(log) {
+                    return "<div>" + log + "</div>";
+                }).join("");
+            }
+            console.log(message);
+        }
+        
+        function updateStatus(status) {
+            var statusDiv = document.getElementById("status");
+            if (statusDiv) {
+                statusDiv.innerHTML = "<strong>Status: " + status + "</strong>";
+            }
+            addLog("Status: " + status);
+        }
+        
+        sap.ui.getCore().attachInit(function() {
+            addLog("UI5 Core initialized successfully!");
+            updateStatus("UI5 Core Ready");
+            
+            try {
+                // Test basic UI5 functionality
+                sap.ui.require([
+                    "sap/ui/core/ComponentContainer",
+                    "sap/m/Button",
+                    "sap/m/MessageToast"
+                ], function(ComponentContainer, Button, MessageToast) {
+                    addLog("Required modules loaded successfully");
+                    updateStatus("Modules Loaded");
+                    
+                    // Test creating a simple button first
+                    var testButton = new Button({
+                        text: "Test UI5",
+                        press: function() {
+                            MessageToast.show("UI5 is working!");
+                            addLog("Test button clicked - UI5 is working!");
+                        }
+                    });
+                    testButton.placeAt("debug-info");
+                    addLog("Test button created successfully");
+                    
+                    // Now try to load the component
+                    try {
+                        updateStatus("Loading Component...");
+                        addLog("Attempting to create ComponentContainer...");
+                        
+                        var oComponentContainer = new ComponentContainer({
+                            name: "smart.hr.portal",
+                            settings: {
+                                id: "smart.hr.portal"
+                            },
+                            async: true,
+                            componentCreated: function() {
+                                addLog("Component created successfully!");
+                                updateStatus("Component Created");
+                            },
+                            componentFailed: function(oEvent) {
+                                var error = oEvent.getParameter("reason");
+                                addLog("Component creation failed: " + error);
+                                updateStatus("Component Failed: " + error);
+                            }
+                        });
+                        
+                        oComponentContainer.placeAt("app-container");
+                        addLog("ComponentContainer placed in DOM");
+                        updateStatus("Component Container Created");
+                        
+                    } catch (componentError) {
+                        addLog("Error creating component: " + componentError.message);
+                        updateStatus("Component Error: " + componentError.message);
+                    }
+                    
+                }, function(error) {
+                    addLog("Error loading required modules: " + error);
+                    updateStatus("Module Loading Error: " + error);
+                });
+                
+            } catch (error) {
+                addLog("Error in UI5 initialization: " + error.message);
+                updateStatus("Initialization Error: " + error.message);
+            }
+        });
+        
+        // Global error handlers
+        window.addEventListener('error', function(e) {
+            addLog("Global error: " + e.message + " at " + e.filename + ":" + e.lineno);
+            updateStatus("Global Error: " + e.message);
+        });
+        
+        window.addEventListener('unhandledrejection', function(e) {
+            addLog("Unhandled promise rejection: " + e.reason);
+            updateStatus("Promise Rejection: " + e.reason);
+        });
+    </script>
+</body>
+</html>

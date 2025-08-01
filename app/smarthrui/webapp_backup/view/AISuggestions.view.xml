@@ -1,0 +1,377 @@
+<mvc:View
+    controllerName="smart.hr.portal.controller.AISuggestions"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+    xmlns="sap.m">
+
+    <Page id="aiSuggestionsPage" 
+          title="{i18n>aiSuggestions}" 
+          showNavButton="true" 
+          navButtonPress="onNavBack">
+        
+        <!-- Page Header with AI Status -->
+        <customHeader>
+            <Bar id="aiSuggestionsHeader">
+                <contentLeft>
+                    <Title id="aiSuggestionsTitle" text="{i18n>aiSuggestions}" level="H1"/>
+                </contentLeft>
+                <contentMiddle>
+                    <HBox id="aiStatusBox" alignItems="Center" class="sapUiMediumMarginBegin">
+                        <core:Icon id="aiStatusIcon" 
+                                  src="sap-icon://artificial-intelligence" 
+                                  color="#0070F2" 
+                                  size="1.5rem" 
+                                  class="sapUiTinyMarginEnd"/>
+                        <VBox id="aiStatusInfo">
+                            <Text id="aiStatusText" text="{aiSuggestions>/aiStatus}" class="sapMText"/>
+                            <Text id="lastAnalysisText" text="{i18n>lastAnalysis}: {aiSuggestions>/lastAnalysis}" class="sapMTextSmall"/>
+                        </VBox>
+                    </HBox>
+                </contentMiddle>
+                <contentRight>
+                    <Button id="refreshAIBtn"
+                            icon="sap-icon://refresh"
+                            tooltip="{i18n>refreshAI}"
+                            press="onRefreshAISuggestions"
+                            type="Transparent"/>
+                    <Button id="generateNewBtn"
+                            icon="sap-icon://generate-shortcut"
+                            tooltip="{i18n>generateNew}"
+                            press="onGenerateNewSuggestions"
+                            type="Transparent"/>
+                    <Button id="exportAIBtn"
+                            icon="sap-icon://excel-attachment"
+                            tooltip="{i18n>export}"
+                            press="onExportAISuggestions"
+                            type="Transparent"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+        
+        <content>
+            <ScrollContainer id="aiSuggestionsScrollContainer" height="100%" width="100%" horizontal="false" vertical="true">
+                
+                <!-- AI Suggestions Summary -->
+                <VBox id="aiSummarySection" class="sapUiMediumMargin">
+                    <Title id="aiSummaryTitle" text="{i18n>aiInsightsSummary}" level="H2" class="sapUiMediumMarginBottom"/>
+                    
+                    <HBox id="aiSummaryCards" wrap="Wrap" class="sapUiNoMargin">
+                        
+                        <!-- Total Suggestions Card -->
+                        <f:Card id="totalSuggestionsCard" class="sapUiMediumMarginEnd sapUiMediumMarginBottom" width="250px">
+                            <f:header>
+                                <card:Header id="totalSuggestionsHeader" 
+                                            title="{i18n>totalSuggestions}" 
+                                            iconSrc="sap-icon://lightbulb"/>
+                            </f:header>
+                            <f:content>
+                                <VBox id="totalSuggestionsContent" class="sapUiMediumMargin" alignItems="Center">
+                                    <ObjectNumber id="totalSuggestionsNumber" 
+                                                 number="{aiSuggestions>/totalSuggestions}" 
+                                                 emphasized="true"
+                                                 state="Information"
+                                                 class="sapUiLargeMarginBottom"/>
+                                    <Text id="totalSuggestionsText" text="{i18n>acrossAllCategories}"/>
+                                </VBox>
+                            </f:content>
+                        </f:Card>
+                        
+                        <!-- High Impact Card -->
+                        <f:Card id="highImpactCard" class="sapUiMediumMarginEnd sapUiMediumMarginBottom" width="250px">
+                            <f:header>
+                                <card:Header id="highImpactHeader" 
+                                            title="{i18n>highImpactSuggestions}" 
+                                            iconSrc="sap-icon://target-group"/>
+                            </f:header>
+                            <f:content>
+                                <VBox id="highImpactContent" class="sapUiMediumMargin" alignItems="Center">
+                                    <ObjectNumber id="highImpactNumber" 
+                                                 number="{aiSuggestions>/highImpactCount}" 
+                                                 emphasized="true"
+                                                 state="Success"
+                                                 class="sapUiLargeMarginBottom"/>
+                                    <Text id="highImpactText" text="{i18n>requiresImmediateAttention}"/>
+                                </VBox>
+                            </f:content>
+                        </f:Card>
+                        
+                        <!-- AI Confidence Card -->
+                        <f:Card id="aiConfidenceCard" class="sapUiMediumMarginBottom" width="250px">
+                            <f:header>
+                                <card:Header id="aiConfidenceHeader" 
+                                            title="{i18n>averageConfidence}" 
+                                            iconSrc="sap-icon://quality-issue"/>
+                            </f:header>
+                            <f:content>
+                                <VBox id="aiConfidenceContent" class="sapUiMediumMargin" alignItems="Center">
+                                    <ObjectNumber id="aiConfidenceNumber" 
+                                                 number="{aiSuggestions>/averageConfidence}" 
+                                                 unit="%"
+                                                 emphasized="true"
+                                                 state="{parts: ['aiSuggestions>/averageConfidence'], formatter: '.formatConfidenceState'}"
+                                                 class="sapUiLargeMarginBottom"/>
+                                    <Text id="aiConfidenceText" text="{i18n>basedOnDataAnalysis}"/>
+                                </VBox>
+                            </f:content>
+                        </f:Card>
+                        
+                    </HBox>
+                </VBox>
+                
+                <!-- Engagement Ideas Section -->
+                <VBox id="engagementIdeasSection" class="sapUiMediumMargin">
+                    <HBox id="engagementIdeasHeader" justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
+                        <Title id="engagementIdeasTitle" text="{i18n>engagementIdeas}" level="H2"/>
+                        <Button id="viewAllEngagementBtn"
+                                text="{i18n>viewAll}"
+                                press="onViewAllEngagement"
+                                type="Emphasized"/>
+                    </HBox>
+                    
+                    <VBox id="engagementIdeasList" items="{aiSuggestions>/engagementIdeas}">
+                        <f:Card id="engagementIdeaCard" class="sapUiMediumMarginBottom">
+                            <f:header>
+                                <card:Header id="engagementIdeaHeader" 
+                                            title="{Title}" 
+                                            subtitle="{Category}"
+                                            iconSrc="sap-icon://collaborate"/>
+                            </f:header>
+                            <f:content>
+                                <VBox id="engagementIdeaContent" class="sapUiMediumMargin">
+                                    
+                                    <!-- Description -->
+                                    <Text id="engagementIdeaDescription" 
+                                          text="{Description}" 
+                                          class="sapMText sapUiMediumMarginBottom"/>
+                                    
+                                    <!-- Source and Context -->
+                                    <VBox id="engagementSourceBox" class="sapUiTinyMarginBottom">
+                                        <Label id="engagementSourceLabel" text="{i18n>sourceContext}:" class="sapMLabel"/>
+                                        <Text id="engagementSourceText" 
+                                              text="{Source}" 
+                                              class="sapMTextSmall"/>
+                                        <Text id="engagementContextText" 
+                                              text="{Context}" 
+                                              class="sapMTextSmall"/>
+                                    </VBox>
+                                    
+                                    <!-- Confidence and Impact -->
+                                    <HBox id="engagementMetricsBox" justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop">
+                                        <VBox id="engagementConfidenceBox">
+                                            <Label id="engagementConfidenceLabel" text="{i18n>confidence}:" class="sapMLabel"/>
+                                            <ObjectStatus id="engagementConfidenceStatus"
+                                                         text="{Confidence}%"
+                                                         state="{parts: ['Confidence'], formatter: '.formatConfidenceState'}"/>
+                                        </VBox>
+                                        <VBox id="engagementImpactBox">
+                                            <Label id="engagementImpactLabel" text="{i18n>expectedImpact}:" class="sapMLabel"/>
+                                            <ObjectStatus id="engagementImpactStatus"
+                                                         text="{Impact}"
+                                                         state="{parts: ['Impact'], formatter: '.formatImpactState'}"/>
+                                        </VBox>
+                                        <VBox id="engagementActionsBox">
+                                            <Button id="implementEngagementBtn"
+                                                    text="{i18n>implement}"
+                                                    press="onImplementSuggestion"
+                                                    type="Default"
+                                                    class="sapUiTinyMarginEnd"/>
+                                            <Button id="dismissEngagementBtn"
+                                                    text="{i18n>dismiss}"
+                                                    press="onDismissSuggestion"
+                                                    type="Transparent"/>
+                                        </VBox>
+                                    </HBox>
+                                    
+                                </VBox>
+                            </f:content>
+                        </f:Card>
+                    </VBox>
+                </VBox>
+                
+                <!-- Training Recommendations Section -->
+                <VBox id="trainingRecommendationsSection" class="sapUiMediumMargin">
+                    <HBox id="trainingRecommendationsHeader" justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
+                        <Title id="trainingRecommendationsTitle" text="{i18n>trainingRecommendations}" level="H2"/>
+                        <Button id="viewAllTrainingBtn"
+                                text="{i18n>viewAll}"
+                                press="onViewAllTraining"
+                                type="Emphasized"/>
+                    </HBox>
+                    
+                    <VBox id="trainingRecommendationsList" items="{aiSuggestions>/trainingRecommendations}">
+                        <f:Card id="trainingRecommendationCard" class="sapUiMediumMarginBottom">
+                            <f:header>
+                                <card:Header id="trainingRecommendationHeader" 
+                                            title="{Title}" 
+                                            subtitle="{TargetAudience}"
+                                            iconSrc="sap-icon://learning-assistant"/>
+                            </f:header>
+                            <f:content>
+                                <VBox id="trainingRecommendationContent" class="sapUiMediumMargin">
+                                    
+                                    <!-- Description -->
+                                    <Text id="trainingRecommendationDescription" 
+                                          text="{Description}" 
+                                          class="sapMText sapUiMediumMarginBottom"/>
+                                    
+                                    <!-- Target Details -->
+                                    <VBox id="trainingTargetBox" class="sapUiTinyMarginBottom">
+                                        <Label id="trainingTargetLabel" text="{i18n>targetDetails}:" class="sapMLabel"/>
+                                        <Text id="trainingDepartmentText" 
+                                              text="{i18n>department}: {Department}" 
+                                              class="sapMTextSmall"/>
+                                        <Text id="trainingSkillGapText" 
+                                              text="{i18n>skillGap}: {SkillGap}" 
+                                              class="sapMTextSmall"/>
+                                    </VBox>
+                                    
+                                    <!-- Source and Context -->
+                                    <VBox id="trainingSourceBox" class="sapUiTinyMarginBottom">
+                                        <Label id="trainingSourceLabel" text="{i18n>sourceContext}:" class="sapMLabel"/>
+                                        <Text id="trainingSourceText" 
+                                              text="{Source}" 
+                                              class="sapMTextSmall"/>
+                                        <Text id="trainingContextText" 
+                                              text="{Context}" 
+                                              class="sapMTextSmall"/>
+                                    </VBox>
+                                    
+                                    <!-- Confidence and Impact -->
+                                    <HBox id="trainingMetricsBox" justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop">
+                                        <VBox id="trainingConfidenceBox">
+                                            <Label id="trainingConfidenceLabel" text="{i18n>confidence}:" class="sapMLabel"/>
+                                            <ObjectStatus id="trainingConfidenceStatus"
+                                                         text="{Confidence}%"
+                                                         state="{parts: ['Confidence'], formatter: '.formatConfidenceState'}"/>
+                                        </VBox>
+                                        <VBox id="trainingImpactBox">
+                                            <Label id="trainingImpactLabel" text="{i18n>expectedImpact}:" class="sapMLabel"/>
+                                            <ObjectStatus id="trainingImpactStatus"
+                                                         text="{Impact}"
+                                                         state="{parts: ['Impact'], formatter: '.formatImpactState'}"/>
+                                        </VBox>
+                                        <VBox id="trainingActionsBox">
+                                            <Button id="scheduleTrainingBtn"
+                                                    text="{i18n>schedule}"
+                                                    press="onScheduleTraining"
+                                                    type="Default"
+                                                    class="sapUiTinyMarginEnd"/>
+                                            <Button id="dismissTrainingBtn"
+                                                    text="{i18n>dismiss}"
+                                                    press="onDismissSuggestion"
+                                                    type="Transparent"/>
+                                        </VBox>
+                                    </HBox>
+                                    
+                                </VBox>
+                            </f:content>
+                        </f:Card>
+                    </VBox>
+                </VBox>
+                
+                <!-- Policy Enhancements Section -->
+                <VBox id="policyEnhancementsSection" class="sapUiMediumMargin">
+                    <HBox id="policyEnhancementsHeader" justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
+                        <Title id="policyEnhancementsTitle" text="{i18n>policyEnhancements}" level="H2"/>
+                        <Button id="viewAllPolicyBtn"
+                                text="{i18n>viewAll}"
+                                press="onViewAllPolicy"
+                                type="Emphasized"/>
+                    </HBox>
+                    
+                    <VBox id="policyEnhancementsList" items="{aiSuggestions>/policyEnhancements}">
+                        <f:Card id="policyEnhancementCard" class="sapUiMediumMarginBottom">
+                            <f:header>
+                                <card:Header id="policyEnhancementHeader" 
+                                            title="{Title}" 
+                                            subtitle="{PolicyArea}"
+                                            iconSrc="sap-icon://document-text"/>
+                            </f:header>
+                            <f:content>
+                                <VBox id="policyEnhancementContent" class="sapUiMediumMargin">
+                                    
+                                    <!-- Description -->
+                                    <Text id="policyEnhancementDescription" 
+                                          text="{Description}" 
+                                          class="sapMText sapUiMediumMarginBottom"/>
+                                    
+                                    <!-- Policy Details -->
+                                    <VBox id="policyDetailsBox" class="sapUiTinyMarginBottom">
+                                        <Label id="policyDetailsLabel" text="{i18n>policyDetails}:" class="sapMLabel"/>
+                                        <Text id="policyCurrentText" 
+                                              text="{i18n>currentPolicy}: {CurrentPolicy}" 
+                                              class="sapMTextSmall"/>
+                                        <Text id="policyProposedText" 
+                                              text="{i18n>proposedChange}: {ProposedChange}" 
+                                              class="sapMTextSmall"/>
+                                    </VBox>
+                                    
+                                    <!-- Source and Context -->
+                                    <VBox id="policySourceBox" class="sapUiTinyMarginBottom">
+                                        <Label id="policySourceLabel" text="{i18n>sourceContext}:" class="sapMLabel"/>
+                                        <Text id="policySourceText" 
+                                              text="{Source}" 
+                                              class="sapMTextSmall"/>
+                                        <Text id="policyContextText" 
+                                              text="{Context}" 
+                                              class="sapMTextSmall"/>
+                                    </VBox>
+                                    
+                                    <!-- Confidence and Impact -->
+                                    <HBox id="policyMetricsBox" justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop">
+                                        <VBox id="policyConfidenceBox">
+                                            <Label id="policyConfidenceLabel" text="{i18n>confidence}:" class="sapMLabel"/>
+                                            <ObjectStatus id="policyConfidenceStatus"
+                                                         text="{Confidence}%"
+                                                         state="{parts: ['Confidence'], formatter: '.formatConfidenceState'}"/>
+                                        </VBox>
+                                        <VBox id="policyImpactBox">
+                                            <Label id="policyImpactLabel" text="{i18n>expectedImpact}:" class="sapMLabel"/>
+                                            <ObjectStatus id="policyImpactStatus"
+                                                         text="{Impact}"
+                                                         state="{parts: ['Impact'], formatter: '.formatImpactState'}"/>
+                                        </VBox>
+                                        <VBox id="policyActionsBox">
+                                            <Button id="reviewPolicyBtn"
+                                                    text="{i18n>review}"
+                                                    press="onReviewPolicy"
+                                                    type="Default"
+                                                    class="sapUiTinyMarginEnd"/>
+                                            <Button id="dismissPolicyBtn"
+                                                    text="{i18n>dismiss}"
+                                                    press="onDismissSuggestion"
+                                                    type="Transparent"/>
+                                        </VBox>
+                                    </HBox>
+                                    
+                                </VBox>
+                            </f:content>
+                        </f:Card>
+                    </VBox>
+                </VBox>
+                
+            </ScrollContainer>
+        </content>
+        
+        <!-- Footer with AI Actions -->
+        <footer>
+            <Toolbar id="aiSuggestionsFooter">
+                <Text id="aiFooterText" text="{aiSuggestions>/footerSummaryText}"/>
+                <ToolbarSpacer id="aiFooterSpacer"/>
+                <Button id="generateReportBtn"
+                        icon="sap-icon://document"
+                        text="{i18n>generateAIReport}"
+                        press="onGenerateAIReport"
+                        type="Default"/>
+                <Button id="configureAIBtn"
+                        icon="sap-icon://settings"
+                        text="{i18n>configureAI}"
+                        press="onConfigureAI"
+                        type="Emphasized"/>
+            </Toolbar>
+        </footer>
+        
+    </Page>
+</mvc:View>
