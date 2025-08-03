@@ -101,23 +101,7 @@ Keep the tone professional and constructive.`;
     return { summary };
   });
 
-  // Stub: Suggest personalized training plan
-  this.on('suggestTraining', async (req) => {
-    const { employeeID, gaps } = req.data;
-    
-    // TODO: Implement training suggestions
-    // 1. Analyze employee's current role and performance data
-    // 2. Identify skill gaps from performance reviews and feedback
-    // 3. Consider career progression paths and department needs
-    // 4. Construct prompt with employee context and identified gaps
-    // 5. Call GenAI API to generate personalized training plan
-    // 6. Return structured training recommendations
-    
-    const plan = `[STUB] Training plan for Employee ${employeeID} addressing gaps: ${gaps}. ` +
-      `Implementation needed: analyze employee profile, match with training catalog, generate personalized plan.`;
-    
-    return { plan };
-  });
+
 
   // Stub: Generate department engagement ideas
   this.on('getEngagementIdeas', async (req) => {

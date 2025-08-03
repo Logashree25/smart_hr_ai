@@ -17,13 +17,7 @@ service GenAIService @(path: '/genai') {
     explanation : String;
   };
 
-  // AI-powered training recommendations
-  action suggestTraining(
-    employeeID : Integer,
-    gaps : String
-  ) returns {
-    plan : String;
-  };
+
 
   // AI-powered engagement ideas generation
   action getEngagementIdeas(

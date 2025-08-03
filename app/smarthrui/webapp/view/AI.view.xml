@@ -1,0 +1,139 @@
+<mvc:View
+    controllerName="smarthrui.controller.AI"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    
+    <Page id="aiPage" title="{i18n>aiTitle}">
+        <content>
+            <VBox class="sapUiMediumMargin">
+                
+                <!-- AI Actions Panel -->
+                <Panel headerText="{i18n>generateInsights}" class="sapUiResponsiveMargin smarthr-ai-panel">
+                    <content>
+                        <VBox class="sapUiMediumMargin">
+                            <Text text="Generate AI-powered insights for your organization" class="sapUiMediumMarginBottom"/>
+                            
+                            <!-- Department Selection -->
+                            <HBox alignItems="Center" class="sapUiMediumMarginBottom">
+                                <Label text="Select Department:" class="sapUiMediumMarginEnd"/>
+                                <ComboBox id="departmentSelector"
+                                        items="{view>/departments}"
+                                        selectedKey="{view>/selectedDepartment}"
+                                        placeholder="Choose a department">
+                                    <core:Item key="{view>}" text="{view>}"/>
+                                </ComboBox>
+                            </HBox>
+                            
+                            <!-- AI Action Buttons -->
+                            <HBox wrap="Wrap" class="sapUiMediumMarginTop">
+                                <Button text="{i18n>engagementIdeas}" 
+                                      press="onGenerateEngagementIdeas" 
+                                      class="smarthr-ai-button"
+                                      icon="sap-icon://lightbulb"/>
+                                <Button text="{i18n>policyAnalysis}" 
+                                      press="onAnalyzePolicyGaps" 
+                                      class="smarthr-ai-button"
+                                      icon="sap-icon://document"/>
+                                <Button text="{i18n>teamPerformance}" 
+                                      press="onAnalyzeTeamPerformance" 
+                                      class="smarthr-ai-button"
+                                      icon="sap-icon://group"/>
+                            </HBox>
+                        </VBox>
+                    </content>
+                </Panel>
+
+                <!-- Engagement Ideas -->
+                <Panel headerText="Recent Engagement Ideas" class="sapUiResponsiveMargin">
+                    <content>
+                        <Table id="engagementIdeasTable" 
+                               items="{/EngagementIdea}"
+                               growing="true"
+                               growingThreshold="10"
+                               class="sapUiResponsiveMargin">
+                            <headerToolbar>
+                                <Toolbar>
+                                    <Title text="AI-Generated Engagement Ideas"/>
+                                    <ToolbarSpacer/>
+                                    <Button icon="sap-icon://refresh" press="onRefreshEngagementIdeas"/>
+                                </Toolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column>
+                                    <Text text="{i18n>department}"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Generated Date"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Ideas"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Impact Estimate"/>
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{Department}"/>
+                                        <Text text="{path: 'GeneratedDate', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'MMM dd, yyyy'}}"/>
+                                        <Text text="{IdeaText}" maxLines="3"/>
+                                        <Text text="{ImpactEstimate}"
+                                              class="{= ${ImpactEstimate} === 'High' ? 'smarthr-status-high' : ${ImpactEstimate} === 'Medium' ? 'smarthr-status-medium' : 'smarthr-status-low'}"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </content>
+                </Panel>
+
+
+
+                <!-- Policy Enhancements -->
+                <Panel headerText="Policy Enhancement Suggestions" class="sapUiResponsiveMargin">
+                    <content>
+                        <Table id="policyEnhancementsTable" 
+                               items="{/PolicyEnhancement}"
+                               growing="true"
+                               growingThreshold="10"
+                               class="sapUiResponsiveMargin">
+                            <headerToolbar>
+                                <Toolbar>
+                                    <Title text="AI-Generated Policy Suggestions"/>
+                                    <ToolbarSpacer/>
+                                    <Button icon="sap-icon://refresh" press="onRefreshPolicyEnhancements"/>
+                                </Toolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column>
+                                    <Text text="Theme"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Generated Date"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Suggestion"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Rationale"/>
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{Theme}"/>
+                                        <Text text="{path: 'GeneratedDate', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'MMM dd, yyyy'}}"/>
+                                        <Text text="{SuggestionText}" maxLines="3"/>
+                                        <Text text="{Rationale}" maxLines="2"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </content>
+                </Panel>
+
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

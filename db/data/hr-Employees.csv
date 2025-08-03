@@ -1,15 +1,21 @@
-ID,FirstName,LastName,Role,Department,ManagerID,HireDate,IsKeyTalent
-550e8400-e29b-41d4-a716-446655440001,John,Smith,Engineering Manager,Engineering,,2020-01-15,true
-550e8400-e29b-41d4-a716-446655440002,Sarah,Johnson,Senior Developer,Engineering,550e8400-e29b-41d4-a716-446655440001,2021-03-10,true
-550e8400-e29b-41d4-a716-446655440003,Mike,Brown,Developer,Engineering,550e8400-e29b-41d4-a716-446655440001,2022-06-01,false
-550e8400-e29b-41d4-a716-446655440004,Lisa,Davis,QA Engineer,Engineering,550e8400-e29b-41d4-a716-446655440001,2021-09-15,false
-550e8400-e29b-41d4-a716-446655440005,David,Wilson,HR Manager,Human Resources,,2019-05-20,true
-550e8400-e29b-41d4-a716-446655440006,Emma,Taylor,HR Specialist,Human Resources,550e8400-e29b-41d4-a716-446655440005,2022-01-10,false
-550e8400-e29b-41d4-a716-446655440007,James,Anderson,Marketing Manager,Marketing,,2020-08-12,true
-550e8400-e29b-41d4-a716-446655440008,Anna,Martinez,Marketing Specialist,Marketing,550e8400-e29b-41d4-a716-446655440007,2021-11-05,false
-550e8400-e29b-41d4-a716-446655440009,Robert,Garcia,Sales Manager,Sales,,2019-12-03,true
-550e8400-e29b-41d4-a716-446655440010,Jennifer,Rodriguez,Sales Representative,Sales,550e8400-e29b-41d4-a716-446655440009,2022-04-18,false
-550e8400-e29b-41d4-a716-446655440011,William,Lee,Finance Manager,Finance,,2018-07-25,true
-550e8400-e29b-41d4-a716-446655440012,Jessica,White,Financial Analyst,Finance,550e8400-e29b-41d4-a716-446655440011,2021-08-30,false
-550e8400-e29b-41d4-a716-446655440013,Christopher,Harris,Product Manager,Product,,2020-02-14,true
-550e8400-e29b-41d4-a716-446655440014,Amanda,Clark,Product Owner,Product,550e8400-e29b-41d4-a716-446655440013,2022-03-22,false
+ID,FirstName,LastName,Role,Department,Team,Location,HireDate,HireType,TenureMonths
+1,John,Smith,Engineering Manager,Engineering,Backend,New York,2020-01-15,Full-time,48
+2,Sarah,Johnson,Senior Developer,Engineering,Backend,New York,2019-03-22,Full-time,58
+3,Mike,Brown,Developer,Engineering,Frontend,San Francisco,2021-06-10,Full-time,31
+4,Lisa,Davis,QA Engineer,Engineering,Quality,New York,2020-09-05,Full-time,40
+5,David,Wilson,HR Manager,Human Resources,People Ops,Chicago,2018-11-12,Full-time,62
+6,Emma,Taylor,HR Specialist,Human Resources,Recruiting,Chicago,2021-02-28,Full-time,34
+7,James,Anderson,Marketing Manager,Marketing,Digital,Los Angeles,2019-07-18,Full-time,53
+8,Anna,Martinez,Marketing Specialist,Marketing,Content,Los Angeles,2020-12-03,Full-time,37
+9,Robert,Garcia,Sales Manager,Sales,Enterprise,Miami,2018-04-25,Full-time,69
+10,Jennifer,Rodriguez,Sales Representative,Sales,SMB,Miami,2021-08-14,Full-time,28
+11,William,Lee,Finance Manager,Finance,Operations,New York,2017-10-30,Full-time,75
+12,Jessica,White,Financial Analyst,Finance,Planning,New York,2020-05-17,Full-time,43
+13,Christopher,Harris,Product Manager,Product,Platform,San Francisco,2019-01-08,Full-time,60
+14,Amanda,Clark,Product Owner,Product,Mobile,San Francisco,2021-04-12,Full-time,33
+15,Daniel,Lewis,DevOps Engineer,Engineering,Infrastructure,Seattle,2020-07-20,Full-time,41
+16,Michelle,Walker,UX Designer,Product,Design,San Francisco,2021-01-05,Full-time,36
+17,Kevin,Hall,Data Scientist,Engineering,Analytics,New York,2019-09-15,Full-time,52
+18,Laura,Allen,Content Manager,Marketing,Brand,Los Angeles,2020-11-08,Full-time,38
+19,Ryan,Young,Sales Engineer,Sales,Technical,Austin,2021-03-22,Full-time,34
+20,Nicole,King,HR Business Partner,Human Resources,People Ops,Chicago,2019-12-01,Full-time,49

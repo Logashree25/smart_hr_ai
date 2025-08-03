@@ -1,8 +1,9 @@
-ID,Role,Department,CreatedDate,Status,RequiredBy,UrgencyScore
-850e8400-e29b-41d4-a716-446655440001,Senior Software Engineer,Engineering,2024-01-10,open,2024-03-15,4.2
-850e8400-e29b-41d4-a716-446655440002,UX Designer,Design,2024-01-12,interviewing,2024-02-28,3.8
-850e8400-e29b-41d4-a716-446655440003,Data Analyst,Analytics,2024-01-15,open,2024-04-01,3.5
-850e8400-e29b-41d4-a716-446655440004,Marketing Coordinator,Marketing,2024-01-18,offer,2024-03-01,3.2
-850e8400-e29b-41d4-a716-446655440005,DevOps Engineer,Engineering,2024-01-20,open,2024-02-15,4.5
-850e8400-e29b-41d4-a716-446655440006,Sales Executive,Sales,2024-01-22,interviewing,2024-03-10,3.9
-850e8400-e29b-41d4-a716-446655440007,HR Business Partner,Human Resources,2024-01-25,open,2024-04-15,3.1
+ID,Role,Department,CreatedDate,Status,RequiredBy,Level
+1,Senior Frontend Developer,Engineering,2024-01-10,open,2024-03-15,High
+2,Marketing Coordinator,Marketing,2024-01-12,interviewing,2024-02-28,Medium
+3,Sales Development Representative,Sales,2024-01-15,open,2024-02-15,High
+4,Financial Analyst,Finance,2024-01-18,offer,2024-03-01,Medium
+5,Product Designer,Product,2024-01-20,open,2024-04-01,Low
+6,DevOps Engineer,Engineering,2024-01-22,interviewing,2024-03-10,High
+7,HR Generalist,Human Resources,2024-01-25,open,2024-03-20,Medium
+8,Data Engineer,Engineering,2024-01-28,open,2024-04-15,Medium

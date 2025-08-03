@@ -1,10 +1,11 @@
 sap.ui.define([
     "sap/ui/core/UIComponent",
-    "sap/ui/Device"
-], function (UIComponent, Device) {
+    "sap/ui/Device",
+    "smarthrui/model/models"
+], function (UIComponent, Device, models) {
     "use strict";
 
-    return UIComponent.extend("smart.hr.portal.Component", {
+    return UIComponent.extend("smarthrui.Component", {
 
         metadata: {
             manifest: "json"
@@ -16,16 +17,14 @@ sap.ui.define([
          * @override
          */
         init: function () {
-            // Call the base component's init function
+            // call the base component's init function
             UIComponent.prototype.init.apply(this, arguments);
 
-            // Create device model
-            this.setModel(new sap.ui.model.json.JSONModel(Device), "device");
+            // set the device model
+            this.setModel(models.createDeviceModel(), "device");
 
-            // Enable routing
-            this.getRouter().initialize();
-
-            console.log("Smart HR Portal Component initialized successfully");
+            // set the view model
+            this.setModel(models.createViewModel(), "view");
         }
     });
 });

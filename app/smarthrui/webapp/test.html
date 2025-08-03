@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart HR Portal Test</title>
+    <script
+        id="sap-ui-bootstrap"
+        src="https://ui5.sap.com/1.120.0/resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_horizon"
+        data-sap-ui-libs="sap.m"
+        data-sap-ui-async="true"
+        data-sap-ui-frameOptions="trusted">
+    </script>
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            new sap.m.App({
+                pages: [
+                    new sap.m.Page({
+                        title: "Smart HR Portal",
+                        content: [
+                            new sap.m.Panel({
+                                headerText: "Welcome to Smart HR Portal",
+                                content: [
+                                    new sap.m.Text({
+                                        text: "This is a test page to verify UI5 is working correctly."
+                                    }),
+                                    new sap.m.Button({
+                                        text: "Test Backend Connection",
+                                        press: function() {
+                                            fetch('/hr/Employees?$top=1')
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    sap.m.MessageToast.show("Backend connected! Found " + data.value.length + " employee(s)");
+                                                })
+                                                .catch(error => {
+                                                    sap.m.MessageToast.show("Backend connection failed: " + error.message);
+                                                });
+                                        }
+                                    })
+                                ]
+                            })
+                        ]
+                    })
+                ]
+            }).placeAt("content");
+        });
+    </script>
+</head>
+<body class="sapUiBody">
+    <div id="content"></div>
+</body>
+</html>

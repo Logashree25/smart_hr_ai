@@ -1,0 +1,102 @@
+<mvc:View
+    controllerName="smarthrui.controller.Employees"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    
+    <Page id="employeesPage" title="{i18n>employeesTitle}">
+        <content>
+            <VBox class="sapUiMediumMargin">
+                
+                <!-- Search and Filter Bar -->
+                <Panel class="sapUiResponsiveMargin">
+                    <content>
+                        <Toolbar>
+                            <SearchField id="searchField" 
+                                       search="onSearch" 
+                                       width="20rem"
+                                       placeholder="{i18n>search}"/>
+                            <ToolbarSpacer/>
+                            <ComboBox id="departmentFilter"
+                                    items="{view>/departments}"
+                                    selectedKey="{view>/selectedDepartment}"
+                                    selectionChange="onDepartmentFilterChange"
+                                    placeholder="Filter by Department">
+                                <core:Item key="{view>}" text="{view>}"/>
+                            </ComboBox>
+                            <Button icon="sap-icon://refresh" press="onRefresh" tooltip="{i18n>refresh}"/>
+                        </Toolbar>
+                    </content>
+                </Panel>
+
+                <!-- Employee Table -->
+                <Table id="employeeTable" 
+                       items="{/Employees}"
+                       growing="true"
+                       growingThreshold="20"
+                       class="sapUiResponsiveMargin">
+                    <headerToolbar>
+                        <Toolbar>
+                            <Title text="{i18n>employeesTitle} ({view>/employeeCount})"/>
+                            <ToolbarSpacer/>
+                            <Button text="{i18n>export}" icon="sap-icon://excel-attachment" press="onExport"/>
+                        </Toolbar>
+                    </headerToolbar>
+                    <columns>
+                        <Column>
+                            <Text text="{i18n>firstName}"/>
+                        </Column>
+                        <Column>
+                            <Text text="{i18n>lastName}"/>
+                        </Column>
+                        <Column>
+                            <Text text="{i18n>role}"/>
+                        </Column>
+                        <Column>
+                            <Text text="{i18n>department}"/>
+                        </Column>
+                        <Column>
+                            <Text text="{i18n>hireDate}"/>
+                        </Column>
+                        <Column>
+                            <Text text="{i18n>manager}"/>
+                        </Column>
+                        <Column>
+                            <Text text="{i18n>isKeyTalent}"/>
+                        </Column>
+                        <Column>
+                            <Text text="Actions"/>
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem press="onEmployeePress">
+                            <cells>
+                                <Text text="{FirstName}"/>
+                                <Text text="{LastName}"/>
+                                <Text text="{Role}"/>
+                                <HBox>
+                                    <Text text="{Department}"/>
+                                    <core:Icon src="sap-icon://group" class="sapUiTinyMarginBegin" visible="{IsKeyTalent}"/>
+                                </HBox>
+                                <Text text="{path: 'HireDate', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'MMM dd, yyyy'}}"/>
+                                <Text text="{Manager/FirstName} {Manager/LastName}"/>
+                                <core:Icon src="sap-icon://favorite" color="{= ${IsKeyTalent} ? '#4CAF50' : '#E0E0E0'}" visible="{IsKeyTalent}"/>
+                                <HBox>
+                                    <Button icon="sap-icon://detail-view" 
+                                          press="onViewEmployee" 
+                                          type="Transparent"
+                                          tooltip="View Details"/>
+                                    <Button icon="sap-icon://lightbulb" 
+                                          press="onGenerateInsights" 
+                                          type="Transparent"
+                                          tooltip="Generate AI Insights"/>
+                                </HBox>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

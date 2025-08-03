@@ -1,0 +1,98 @@
+<mvc:View
+    controllerName="smarthrui.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    
+    <Page id="mainPage" title="{i18n>dashboardTitle}">
+        <content>
+            <VBox class="sapUiMediumMargin">
+                
+                <!-- Header Section -->
+                <Panel headerText="{i18n>dashboardTitle}" class="sapUiResponsiveMargin">
+                    <content>
+                        <Text text="{i18n>dashboardSubtitle}" class="sapUiMediumMarginBottom"/>
+                        
+                        <!-- KPI Tiles -->
+                        <HBox wrap="Wrap" class="sapUiMediumMarginTop">
+                            <VBox class="smarthr-kpi-tile">
+                                <Text text="{view>/kpis/totalEmployees}" class="smarthr-kpi-number"/>
+                                <Text text="{i18n>totalEmployees}" class="smarthr-kpi-label"/>
+                            </VBox>
+                            <VBox class="smarthr-kpi-tile">
+                                <Text text="{view>/kpis/keyTalent}" class="smarthr-kpi-number"/>
+                                <Text text="{i18n>keyTalent}" class="smarthr-kpi-label"/>
+                            </VBox>
+                            <VBox class="smarthr-kpi-tile">
+                                <Text text="{view>/kpis/openPositions}" class="smarthr-kpi-number"/>
+                                <Text text="{i18n>openPositions}" class="smarthr-kpi-label"/>
+                            </VBox>
+                            <VBox class="smarthr-kpi-tile">
+                                <Text text="{view>/kpis/avgSatisfaction}%" class="smarthr-kpi-number"/>
+                                <Text text="{i18n>avgSatisfaction}" class="smarthr-kpi-label"/>
+                            </VBox>
+                        </HBox>
+                    </content>
+                </Panel>
+
+                <!-- Department Summary -->
+                <Panel headerText="{i18n>departmentSummary}" class="sapUiResponsiveMargin">
+                    <content>
+                        <Table id="departmentTable" 
+                               items="{/DepartmentSummary}"
+                               growing="true"
+                               growingThreshold="20"
+                               class="sapUiResponsiveMargin">
+                            <headerToolbar>
+                                <Toolbar>
+                                    <Title text="{i18n>departmentSummary}"/>
+                                    <ToolbarSpacer/>
+                                    <Button icon="sap-icon://refresh" press="onRefreshDepartments"/>
+                                </Toolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column>
+                                    <Text text="{i18n>department}"/>
+                                </Column>
+                                <Column>
+                                    <Text text="{i18n>totalEmployees}"/>
+                                </Column>
+                                <Column>
+                                    <Text text="{i18n>keyTalent}"/>
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem press="onDepartmentPress">
+                                    <cells>
+                                        <Text text="{Department}"/>
+                                        <Text text="{EmployeeCount}"/>
+                                        <Text text="{KeyTalentCount}"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </content>
+                </Panel>
+
+                <!-- Recent Employees -->
+                <Panel headerText="Recent Hires" class="sapUiResponsiveMargin">
+                    <content>
+                        <List id="recentEmployeesList" 
+                              items="{path: '/Employees', 
+                                     sorter: {path: 'HireDate', descending: true},
+                                     length: 5}"
+                              class="sapUiResponsiveMargin">
+                            <StandardListItem 
+                                title="{FirstName} {LastName}"
+                                description="{Role} - {Department}"
+                                info="{HireDate}"
+                                type="Navigation"
+                                press="onEmployeePress"/>
+                        </List>
+                    </content>
+                </Panel>
+
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

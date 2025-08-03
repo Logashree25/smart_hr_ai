@@ -1,0 +1,163 @@
+<mvc:View
+    controllerName="smarthrui.controller.EmployeeDetail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f">
+    
+    <Page id="employeeDetailPage" title="{i18n>employeeDetails}" showNavButton="true" navButtonPress="onNavBack">
+        <content>
+            <VBox class="sapUiMediumMargin">
+                
+                <!-- Employee Header -->
+                <Panel class="sapUiResponsiveMargin">
+                    <content>
+                        <HBox alignItems="Center" class="sapUiMediumMargin">
+                            <VBox class="smarthr-employee-avatar">
+                                <Text text="{FirstName/0}{LastName/0}"/>
+                            </VBox>
+                            <VBox class="sapUiMediumMarginBegin">
+                                <Title text="{FirstName} {LastName}" level="H2"/>
+                                <Text text="{Role}" class="sapUiMediumMarginBottom"/>
+                                <HBox>
+                                    <Text text="{Department}" class="smarthr-department-badge"/>
+                                    <Text text="Key Talent" class="smarthr-key-talent sapUiTinyMarginBegin" visible="{IsKeyTalent}"/>
+                                </HBox>
+                            </VBox>
+                        </HBox>
+                    </content>
+                </Panel>
+
+                <!-- Employee Details -->
+                <Panel headerText="Employee Information" class="sapUiResponsiveMargin">
+                    <content>
+                        <f:SimpleForm 
+                            editable="false"
+                            layout="ResponsiveGridLayout"
+                            labelSpanXL="3"
+                            labelSpanL="3"
+                            labelSpanM="3"
+                            labelSpanS="12"
+                            adjustLabelSpan="false"
+                            emptySpanXL="4"
+                            emptySpanL="4"
+                            emptySpanM="4"
+                            emptySpanS="0"
+                            columnsXL="1"
+                            columnsL="1"
+                            columnsM="1"
+                            singleContainerFullSize="false">
+                            <f:content>
+                                <Label text="{i18n>employeeId}"/>
+                                <Text text="{ID}"/>
+                                
+                                <Label text="{i18n>firstName}"/>
+                                <Text text="{FirstName}"/>
+                                
+                                <Label text="{i18n>lastName}"/>
+                                <Text text="{LastName}"/>
+                                
+                                <Label text="{i18n>role}"/>
+                                <Text text="{Role}"/>
+                                
+                                <Label text="{i18n>department}"/>
+                                <Text text="{Department}"/>
+                                
+                                <Label text="{i18n>hireDate}"/>
+                                <Text text="{path: 'HireDate', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'MMM dd, yyyy'}}"/>
+                                
+                                <Label text="{i18n>manager}"/>
+                                <Text text="{Manager/FirstName} {Manager/LastName}"/>
+                                
+                                <Label text="{i18n>isKeyTalent}"/>
+                                <core:Icon src="sap-icon://favorite" color="{= ${IsKeyTalent} ? '#4CAF50' : '#E0E0E0'}"/>
+                            </f:content>
+                        </f:SimpleForm>
+                    </content>
+                </Panel>
+
+                <!-- Performance Data -->
+                <Panel headerText="Performance Metrics" class="sapUiResponsiveMargin">
+                    <content>
+                        <Table id="performanceTable" 
+                               items="{PerformanceData}"
+                               class="sapUiResponsiveMargin">
+                            <columns>
+                                <Column>
+                                    <Text text="Period"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Score"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Goals Met (%)"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Manager Rating"/>
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{Period}"/>
+                                        <Text text="{Score}"/>
+                                        <Text text="{GoalsMet}%"/>
+                                        <Text text="{ManagerRating}/10"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </content>
+                </Panel>
+
+                <!-- Satisfaction Survey Data -->
+                <Panel headerText="Satisfaction Survey" class="sapUiResponsiveMargin">
+                    <content>
+                        <Table id="satisfactionTable" 
+                               items="{SurveyResponses}"
+                               class="sapUiResponsiveMargin">
+                            <columns>
+                                <Column>
+                                    <Text text="Survey Date"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Score"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Comments"/>
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{path: 'SurveyDate', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'MMM dd, yyyy'}}"/>
+                                        <Text text="{Score}/100"/>
+                                        <Text text="{Comments}" maxLines="2"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </content>
+                </Panel>
+
+                <!-- AI Actions -->
+                <Panel headerText="AI-Powered Insights" class="sapUiResponsiveMargin smarthr-ai-panel">
+                    <content>
+                        <VBox class="sapUiMediumMargin">
+                            <Text text="Generate AI-powered insights for this employee" class="sapUiMediumMarginBottom"/>
+                            <HBox wrap="Wrap">
+                                <Button text="Attrition Risk" 
+                                      press="onGenerateAttritionRisk" 
+                                      class="smarthr-ai-button"/>
+                                <Button text="Training Recommendations" 
+                                      press="onGenerateTrainingRecommendations" 
+                                      class="smarthr-ai-button"/>
+                            </HBox>
+                        </VBox>
+                    </content>
+                </Panel>
+
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

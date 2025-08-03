@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Smart HR Portal - Standalone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0070f3 0%, #0051cc 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #0070f3 0%, #0051cc 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,112,243,0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,112,243,0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .data-panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            border-left: 4px solid #0070f3;
+            min-height: 200px;
+        }
+        
+        .data-panel h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .loading {
+            color: #666;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .loading::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-top: 2px solid #0070f3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .employee-list, .dept-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+        
+        .employee-list li, .dept-list li {
+            background: white;
+            margin: 8px 0;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #0070f3;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .employee-name {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .employee-details {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 4px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #28a745;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 Smart HR Portal</h1>
+            <p>AI-Powered HR Management System</p>
+        </div>
+        
+        <div class="content">
+            <div class="button-grid">
+                <button class="btn" onclick="loadEmployees()">
+                    👥 View Employees
+                </button>
+                <button class="btn" onclick="loadDepartments()">
+                    🏢 Department Summary
+                </button>
+                <button class="btn" onclick="generateInsights()">
+                    💡 Generate AI Insights
+                </button>
+                <button class="btn" onclick="analyzeTeamPerformance()">
+                    📊 Team Performance
+                </button>
+                <button class="btn" onclick="analyzePolicyGaps()">
+                    📋 Policy Analysis
+                </button>
+            </div>
+            
+            <div id="dataPanel" class="data-panel">
+                <h3><span class="status-indicator"></span>Welcome to Smart HR Portal</h3>
+                <p>Click any button above to start exploring your HR data. The system will automatically load employee information when ready.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Base URL for API calls
+        const API_BASE = 'http://localhost:4004/hr';
+        
+        function updatePanel(title, content, type = 'info') {
+            const panel = document.getElementById('dataPanel');
+            let className = '';
+            let icon = '📊';
+            
+            if (type === 'loading') {
+                className = 'loading';
+                icon = '⏳';
+            } else if (type === 'error') {
+                className = 'error';
+                icon = '❌';
+            } else if (type === 'success') {
+                className = 'success';
+                icon = '✅';
+            }
+            
+            panel.innerHTML = `<h3>${icon} ${title}</h3><div class="${className}">${content}</div>`;
+        }
+
+        function loadEmployees() {
+            updatePanel('Loading Employees...', 'Fetching employee data from server...', 'loading');
+            
+            fetch(`${API_BASE}/Employees`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Employees data:', data);
+                    
+                    if (!data.value || data.value.length === 0) {
+                        updatePanel('No Employees Found', 'No employee data available in the system.', 'error');
+                        return;
+                    }
+                    
+                    let html = `<p><strong>Found ${data.value.length} employees:</strong></p><ul class="employee-list">`;
+                    data.value.forEach(emp => {
+                        html += `
+                            <li>
+                                <div class="employee-name">${emp.FirstName} ${emp.LastName}</div>
+                                <div class="employee-details">
+                                    ${emp.Role} • ${emp.Department} • ${emp.Team || 'No Team'} • ${emp.Location || 'No Location'}
+                                    <br>Hire Type: ${emp.HireType || 'Unknown'} • Tenure: ${emp.TenureMonths || 0} months
+                                </div>
+                            </li>
+                        `;
+                    });
+                    html += '</ul>';
+                    updatePanel('Employee Directory', html, 'success');
+                })
+                .catch(error => {
+                    console.error('Error loading employees:', error);
+                    updatePanel('Error Loading Employees', `Failed to load employee data: ${error.message}`, 'error');
+                });
+        }
+
+        function loadDepartments() {
+            updatePanel('Loading Departments...', 'Fetching department summary from server...', 'loading');
+            
+            fetch(`${API_BASE}/DepartmentSummary`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Departments data:', data);
+                    
+                    if (!data.value || data.value.length === 0) {
+                        updatePanel('No Departments Found', 'No department data available in the system.', 'error');
+                        return;
+                    }
+                    
+                    let html = `<p><strong>Found ${data.value.length} departments:</strong></p><ul class="dept-list">`;
+                    data.value.forEach(dept => {
+                        html += `
+                            <li>
+                                <div class="employee-name">${dept.Department}</div>
+                                <div class="employee-details">
+                                    Total Employees: ${dept.EmployeeCount} • Full-time: ${dept.FullTimeCount || 0}
+                                </div>
+                            </li>
+                        `;
+                    });
+                    html += '</ul>';
+                    updatePanel('Department Overview', html, 'success');
+                })
+                .catch(error => {
+                    console.error('Error loading departments:', error);
+                    updatePanel('Error Loading Departments', `Failed to load department data: ${error.message}`, 'error');
+                });
+        }
+
+        function generateInsights() {
+            updatePanel('Generating AI Insights...', 'Analyzing engagement opportunities for Engineering department...', 'loading');
+            
+            fetch(`${API_BASE}/generateEngagementIdeas`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    department: 'Engineering'
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('AI Insights:', data);
+                updatePanel('AI Engagement Ideas', `<p><strong>Generated for Engineering Department:</strong></p><p>${data.value}</p>`, 'success');
+            })
+            .catch(error => {
+                console.error('Error generating insights:', error);
+                updatePanel('Error Generating Insights', `Failed to generate AI insights: ${error.message}`, 'error');
+            });
+        }
+
+        function analyzeTeamPerformance() {
+            updatePanel('Analyzing Team Performance...', 'Analyzing Engineering team performance metrics...', 'loading');
+            
+            fetch(`${API_BASE}/analyzeTeamPerformance`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    department: 'Engineering'
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Team Performance:', data);
+                const formattedText = data.value.replace(/\n/g, '<br>');
+                updatePanel('Team Performance Analysis', `<p>${formattedText}</p>`, 'success');
+            })
+            .catch(error => {
+                console.error('Error analyzing team performance:', error);
+                updatePanel('Error Analyzing Performance', `Failed to analyze team performance: ${error.message}`, 'error');
+            });
+        }
+
+        function analyzePolicyGaps() {
+            updatePanel('Analyzing Policy Gaps...', 'Generating policy enhancement recommendations...', 'loading');
+            
+            fetch(`${API_BASE}/analyzePolicyGaps`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Policy Analysis:', data);
+                updatePanel('Policy Enhancement Recommendations', `<p>${data.value}</p>`, 'success');
+            })
+            .catch(error => {
+                console.error('Error analyzing policy gaps:', error);
+                updatePanel('Error Analyzing Policies', `Failed to analyze policy gaps: ${error.message}`, 'error');
+            });
+        }
+
+        // Test server connection and load initial data
+        function initializeApp() {
+            updatePanel('Initializing...', 'Connecting to HR server and loading initial data...', 'loading');
+            
+            // Test server connection first
+            fetch(`${API_BASE}/Employees`)
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Server connection successful');
+                        loadEmployees(); // Load initial data
+                    } else {
+                        throw new Error('Server not responding');
+                    }
+                })
+                .catch(error => {
+                    console.error('Server connection failed:', error);
+                    updatePanel('Server Connection Failed', 
+                        `Cannot connect to HR server at ${API_BASE}. Please ensure the server is running on port 4004.`, 
+                        'error');
+                });
+        }
+
+        // Initialize the app when page loads
+        setTimeout(initializeApp, 1000);
+    </script>
+</body>
+</html>

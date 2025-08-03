@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Smart HR Portal - Working Version</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1000px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            width: 100%;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0070f3 0%, #0051cc 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            font-weight: 300;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #0070f3 0%, #0051cc 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,112,243,0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,112,243,0.4);
+        }
+        
+        .data-panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            border-left: 4px solid #0070f3;
+            min-height: 200px;
+        }
+        
+        .data-panel h3 {
+            color: #333;
+            margin: 0 0 15px 0;
+            font-size: 1.4em;
+        }
+        
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+        
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        
+        .employee-item {
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid #0070f3;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .employee-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        .employee-details {
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 Smart HR Portal</h1>
+            <p>AI-Powered HR Management System</p>
+        </div>
+        
+        <div class="content">
+            <div class="button-grid">
+                <button class="btn" onclick="loadEmployees()">👥 View Employees</button>
+                <button class="btn" onclick="loadDepartments()">🏢 Department Summary</button>
+                <button class="btn" onclick="generateInsights()">💡 AI Insights</button>
+                <button class="btn" onclick="analyzePerformance()">📊 Team Performance</button>
+                <button class="btn" onclick="analyzePolicies()">📋 Policy Analysis</button>
+            </div>
+            
+            <div id="dataPanel" class="data-panel">
+                <h3>🚀 System Ready</h3>
+                <p>Welcome to the Smart HR Portal! Click any button above to explore your HR data.</p>
+                <p><strong>Status:</strong> <span id="status">Initializing...</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updatePanel(title, content, type = 'info') {
+            const panel = document.getElementById('dataPanel');
+            let className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
+            panel.innerHTML = `<h3>${title}</h3><div class="${className}">${content}</div>`;
+        }
+
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+
+        async function loadEmployees() {
+            updatePanel('⏳ Loading Employees...', 'Fetching employee data from server...', 'loading');
+            
+            try {
+                const response = await fetch('/hr/Employees');
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                console.log('Employees:', data);
+                
+                let html = `<p><strong>Found ${data.value.length} employees:</strong></p>`;
+                data.value.forEach(emp => {
+                    html += `
+                        <div class="employee-item">
+                            <div class="employee-name">${emp.FirstName} ${emp.LastName}</div>
+                            <div class="employee-details">
+                                ${emp.Role} • ${emp.Department} • ${emp.Team} • ${emp.Location}<br>
+                                ${emp.HireType} • ${emp.TenureMonths} months tenure
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                updatePanel('✅ Employee Directory', html, 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                updatePanel('❌ Error Loading Employees', `Failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadDepartments() {
+            updatePanel('⏳ Loading Departments...', 'Fetching department data...', 'loading');
+            
+            try {
+                const response = await fetch('/hr/DepartmentSummary');
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                console.log('Departments:', data);
+                
+                let html = `<p><strong>Found ${data.value.length} departments:</strong></p>`;
+                data.value.forEach(dept => {
+                    html += `
+                        <div class="employee-item">
+                            <div class="employee-name">${dept.Department}</div>
+                            <div class="employee-details">
+                                Total: ${dept.EmployeeCount} employees • Full-time: ${dept.FullTimeCount}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                updatePanel('✅ Department Overview', html, 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                updatePanel('❌ Error Loading Departments', `Failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function generateInsights() {
+            updatePanel('⏳ Generating AI Insights...', 'Analyzing engagement opportunities...', 'loading');
+            
+            try {
+                const response = await fetch('/hr/generateEngagementIdeas', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ department: 'Engineering' })
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                updatePanel('✅ AI Engagement Ideas', `<p>${data.value}</p>`, 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                updatePanel('❌ Error Generating Insights', `Failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function analyzePerformance() {
+            updatePanel('⏳ Analyzing Performance...', 'Analyzing team performance metrics...', 'loading');
+            
+            try {
+                const response = await fetch('/hr/analyzeTeamPerformance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ department: 'Engineering' })
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                const formatted = data.value.replace(/\n/g, '<br>');
+                updatePanel('✅ Team Performance Analysis', `<p>${formatted}</p>`, 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                updatePanel('❌ Error Analyzing Performance', `Failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function analyzePolicies() {
+            updatePanel('⏳ Analyzing Policies...', 'Generating policy recommendations...', 'loading');
+            
+            try {
+                const response = await fetch('/hr/analyzePolicyGaps', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                updatePanel('✅ Policy Enhancement Recommendations', `<p>${data.value}</p>`, 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                updatePanel('❌ Error Analyzing Policies', `Failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize
+        async function init() {
+            try {
+                updateStatus('Testing server connection...');
+                const response = await fetch('/hr/Employees');
+                if (response.ok) {
+                    updateStatus('Connected ✅');
+                    setTimeout(() => loadEmployees(), 1000);
+                } else {
+                    updateStatus('Server error ❌');
+                }
+            } catch (error) {
+                updateStatus('Connection failed ❌');
+                console.error('Init error:', error);
+            }
+        }
+
+        // Start initialization
+        setTimeout(init, 500);
+    </script>
+</body>
+</html>

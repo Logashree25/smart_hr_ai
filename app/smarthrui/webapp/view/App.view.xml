@@ -1,10 +1,69 @@
 <mvc:View
-    controllerName="smart.hr.portal.controller.App"
+    controllerName="smarthrui.controller.App"
     xmlns:mvc="sap.ui.core.mvc"
     displayBlock="true"
     xmlns="sap.m">
-    
-    <App id="app">
-        <!-- Pages will be added here by the router -->
+    <App id="app" class="smarthr-app">
+        <pages>
+            <Page id="page" title="Smart HR Portal" showHeader="true">
+                <content>
+                    <VBox class="sapUiMediumMargin">
+                        <Panel headerText="Smart HR Portal Dashboard" class="sapUiResponsiveMargin">
+                            <content>
+                                <Text text="Welcome to the Smart HR Portal - AI-Powered HR Management System" class="sapUiMediumMarginBottom"/>
+
+                                <!-- Navigation Tiles -->
+                                <TileContainer>
+                                    <StandardTile
+                                        title="Dashboard"
+                                        info="Overview &amp; KPIs"
+                                        icon="sap-icon://home"
+                                        press="onDashboardPress"
+                                        class="smarthr-tile"/>
+                                    <StandardTile
+                                        title="Employees"
+                                        info="Employee Management"
+                                        icon="sap-icon://employee"
+                                        press="onEmployeesPress"
+                                        class="smarthr-tile"/>
+                                    <StandardTile
+                                        title="Analytics"
+                                        info="HR Analytics"
+                                        icon="sap-icon://bar-chart"
+                                        press="onAnalyticsPress"
+                                        class="smarthr-tile"/>
+                                    <StandardTile
+                                        title="AI Insights"
+                                        info="AI-Powered Insights"
+                                        icon="sap-icon://lightbulb"
+                                        press="onAIPress"
+                                        class="smarthr-tile"/>
+                                </TileContainer>
+                            </content>
+                        </Panel>
+
+                        <!-- Quick Stats -->
+                        <Panel headerText="Quick Statistics" class="sapUiResponsiveMargin">
+                            <content>
+                                <HBox wrap="Wrap" class="sapUiMediumMarginTop">
+                                    <VBox class="smarthr-kpi-tile">
+                                        <Text text="{view>/kpis/totalEmployees}" class="smarthr-kpi-number"/>
+                                        <Text text="Total Employees" class="smarthr-kpi-label"/>
+                                    </VBox>
+                                    <VBox class="smarthr-kpi-tile">
+                                        <Text text="{view>/kpis/keyTalent}" class="smarthr-kpi-number"/>
+                                        <Text text="Key Talent" class="smarthr-kpi-label"/>
+                                    </VBox>
+                                    <VBox class="smarthr-kpi-tile">
+                                        <Text text="{view>/kpis/openPositions}" class="smarthr-kpi-number"/>
+                                        <Text text="Open Positions" class="smarthr-kpi-label"/>
+                                    </VBox>
+                                </HBox>
+                            </content>
+                        </Panel>
+                    </VBox>
+                </content>
+            </Page>
+        </pages>
     </App>
 </mvc:View>

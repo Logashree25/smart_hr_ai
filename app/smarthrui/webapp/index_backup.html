@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart HR Portal</title>
+    <script
+        id="sap-ui-bootstrap"
+        src="https://ui5.sap.com/1.120.0/resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_horizon"
+        data-sap-ui-libs="sap.m"
+        data-sap-ui-async="true"
+        data-sap-ui-frameOptions="trusted">
+    </script>
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            console.log("UI5 Core initialized");
+
+            // Create JSON model
+            var oModel = new sap.ui.model.json.JSONModel();
+
+            // Create the main app
+            var oApp = new sap.m.App({
+                pages: [
+                    new sap.m.Page({
+                        title: "Smart HR Portal",
+                        content: [
+                            new sap.m.Panel({
+                                headerText: "Welcome to Smart HR Portal",
+                                class: "sapUiResponsiveMargin",
+                                content: [
+                                    new sap.m.VBox({
+                                        class: "sapUiMediumMargin",
+                                        items: [
+                                            new sap.m.Text({
+                                                text: "AI-Powered HR Management System",
+                                                class: "sapUiMediumMarginBottom"
+                                            }),
+                                    new sap.m.HBox({
+                                        wrap: "Wrap",
+                                        justifyContent: "Start",
+                                        alignItems: "Center",
+                                        class: "sapUiMediumMarginBottom",
+                                        items: [
+                                            new sap.m.Button({
+                                                text: "View Employees",
+                                                icon: "sap-icon://employee",
+                                                type: "Emphasized",
+                                                press: function() {
+                                                    loadEmployees();
+                                                }
+                                            }).addStyleClass("sapUiTinyMarginEnd"),
+                                            new sap.m.Button({
+                                                text: "Department Summary",
+                                                icon: "sap-icon://group",
+                                                type: "Emphasized",
+                                                press: function() {
+                                                    loadDepartments();
+                                                }
+                                            }).addStyleClass("sapUiTinyMarginEnd"),
+                                            new sap.m.Button({
+                                                text: "Generate AI Insights",
+                                                icon: "sap-icon://lightbulb",
+                                                type: "Emphasized",
+                                                press: function() {
+                                                    generateInsights();
+                                                }
+                                            }).addStyleClass("sapUiTinyMarginEnd"),
+                                            new sap.m.Button({
+                                                text: "Team Performance",
+                                                icon: "sap-icon://chart-axis",
+                                                type: "Default",
+                                                press: function() {
+                                                    analyzeTeamPerformance();
+                                                }
+                                            }).addStyleClass("sapUiTinyMarginEnd"),
+                                            new sap.m.Button({
+                                                text: "Policy Analysis",
+                                                icon: "sap-icon://document",
+                                                type: "Default",
+                                                press: function() {
+                                                    analyzePolicyGaps();
+                                                }
+                                            }).addStyleClass("sapUiTinyMarginEnd")
+                                        ]
+                                    })
+                                        ]
+                                    })
+                                ]
+                            }),
+                            new sap.m.Panel({
+                                id: "dataPanel",
+                                headerText: "Data",
+                                class: "sapUiResponsiveMargin",
+                                content: [
+                                    new sap.m.VBox({
+                                        class: "sapUiMediumMargin",
+                                        alignItems: "Start",
+                                        items: [
+                                            new sap.m.Text({
+                                                text: "Click a button above to load data",
+                                                class: "sapUiMediumMarginBottom"
+                                            })
+                                        ]
+                                    })
+                                ]
+                            })
+                        ]
+                    })
+                ]
+            });
+
+            // Set model and place app
+            console.log("Setting model and placing app");
+            oApp.setModel(oModel);
+            oApp.placeAt("content");
+            console.log("App placed successfully");
+
+            // Load initial data
+            setTimeout(function() {
+                console.log("Loading initial data");
+                loadEmployees();
+            }, 1000);
+
+            // Helper functions
+            window.loadEmployees = function() {
+                var oPanel = sap.ui.getCore().byId("dataPanel");
+                oPanel.removeAllContent();
+                oPanel.setHeaderText("Loading Employees...");
+
+                fetch('/hr/Employees')
+                    .then(response => response.json())
+                    .then(data => {
+                        displayEmployees(data.value);
+                    })
+                    .catch(error => {
+                        oPanel.setHeaderText("Error Loading Employees");
+                        oPanel.addContent(new sap.m.Text({
+                            text: "Error: " + error.message
+                        }));
+                    });
+            };
+
+            window.loadDepartments = function() {
+                var oPanel = sap.ui.getCore().byId("dataPanel");
+                oPanel.removeAllContent();
+                oPanel.setHeaderText("Loading Departments...");
+
+                fetch('/hr/DepartmentSummary')
+                    .then(response => response.json())
+                    .then(data => {
+                        displayDepartments(data.value);
+                    })
+                    .catch(error => {
+                        oPanel.setHeaderText("Error Loading Departments");
+                        oPanel.addContent(new sap.m.Text({
+                            text: "Error: " + error.message
+                        }));
+                    });
+            };
+
+            window.generateInsights = function() {
+                var oPanel = sap.ui.getCore().byId("dataPanel");
+                oPanel.removeAllContent();
+                oPanel.setHeaderText("Generating AI Insights...");
+
+                oPanel.addContent(new sap.m.Text({
+                    text: "Analyzing engagement opportunities for Engineering department..."
+                }));
+
+                // Use fetch API instead of OData binding for actions
+                fetch('/hr/generateEngagementIdeas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        department: "Engineering"
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('AI Insights Response:', data);
+                    displayAIInsights(data.value);
+                })
+                .catch(error => {
+                    console.error('Error generating insights:', error);
+                    oPanel.removeAllContent();
+                    oPanel.setHeaderText("Error Generating AI Insights");
+                    oPanel.addContent(new sap.m.Text({
+                        text: "Error: " + error.message
+                    }));
+                });
+            };
+
+            window.analyzeTeamPerformance = function() {
+                var oPanel = sap.ui.getCore().byId("dataPanel");
+                oPanel.removeAllContent();
+                oPanel.setHeaderText("Team Performance Analysis - Loading...");
+
+                fetch('/hr/analyzeTeamPerformance', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        department: "Engineering"
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Team Performance Response:', data);
+                    displayTeamPerformance(data.value);
+                })
+                .catch(error => {
+                    console.error('Error analyzing team performance:', error);
+                    oPanel.removeAllContent();
+                    oPanel.setHeaderText("Team Performance Analysis - Error");
+                    oPanel.addContent(new sap.m.Text({
+                        text: "Error analyzing team performance: " + error.message
+                    }));
+                });
+            };
+
+            window.analyzePolicyGaps = function() {
+                var oPanel = sap.ui.getCore().byId("dataPanel");
+                oPanel.removeAllContent();
+                oPanel.setHeaderText("Policy Gap Analysis - Loading...");
+
+                fetch('/hr/analyzePolicyGaps', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Policy Analysis Response:', data);
+                    displayPolicyAnalysis(data.value);
+                })
+                .catch(error => {
+                    console.error('Error analyzing policy gaps:', error);
+                    oPanel.removeAllContent();
+                    oPanel.setHeaderText("Policy Gap Analysis - Error");
+                    oPanel.addContent(new sap.m.Text({
+                        text: "Error analyzing policy gaps: " + error.message
+                    }));
+                });
+            };
+
+            window.displayEmployees = function(aEmployees) {
+                var oPanel = sap.ui.getCore().byId("dataPanel");
+                oPanel.removeAllContent();
+                oPanel.setHeaderText("Employees (" + aEmployees.length + " items)");
+
+                var oVBox = new sap.m.VBox({
+                    class: "sapUiMediumMargin",
+                    alignItems: "Start",
+                    items: []
+                });
+
+                if (aEmployees.length === 0) {
+                    oVBox.addItem(new sap.m.Text({
+                        text: "No employees found"
+                    }));
+                    oPanel.addContent(oVBox);
+                    return;
+                }
+
+                // Create a table for better display
+                var oTable = new sap.m.Table({
+                    class: "sapUiMediumMarginTop",
+                    columns: [
+                        new sap.m.Column({header: new sap.m.Text({text: "Name"})}),
+                        new sap.m.Column({header: new sap.m.Text({text: "Role"})}),
+                        new sap.m.Column({header: new sap.m.Text({text: "Department"})}),
+                        new sap.m.Column({header: new sap.m.Text({text: "Key Talent"})})
+                    ]
+                });
+
+                aEmployees.forEach(function(oEmployee) {
+                    oTable.addItem(new sap.m.ColumnListItem({
+                        cells: [
+                            new sap.m.Text({text: oEmployee.FirstName + " " + oEmployee.LastName}),
+                            new sap.m.Text({text: oEmployee.Role}),
+                            new sap.m.Text({text: oEmployee.Department}),
+                            new sap.m.Text({text: oEmployee.IsKeyTalent ? "Yes" : "No"})
+                        ]
+                    }));
+                });
+
+                oVBox.addItem(oTable);
+                oPanel.addContent(oVBox);
+            };
+
+            window.displayDepartments = function(aDepartments) {
+                var oPanel = sap.ui.getCore().byId("dataPanel");
+                oPanel.removeAllContent();
+                oPanel.setHeaderText("Department Summary (" + aDepartments.length + " departments)");
+
+                var oVBox = new sap.m.VBox({
+                    class: "sapUiMediumMargin",
+                    alignItems: "Start",
+                    items: []
+                });
+
+                if (aDepartments.length === 0) {
+                    oVBox.addItem(new sap.m.Text({
+                        text: "No departments found"
+                    }));
+                    oPanel.addContent(oVBox);
+                    return;
+                }
+
+                // Create a table for departments
+                var oTable = new sap.m.Table({
+                    class: "sapUiMediumMarginTop",
+                    columns: [
+                        new sap.m.Column({header: new sap.m.Text({text: "Department"})}),
+                        new sap.m.Column({header: new sap.m.Text({text: "Total Employees"})}),
+                        new sap.m.Column({header: new sap.m.Text({text: "Key Talent"})})
+                    ]
+                });
+
+                aDepartments.forEach(function(oDept) {
+                    oTable.addItem(new sap.m.ColumnListItem({
+                        cells: [
+                            new sap.m.Text({text: oDept.Department}),
+                            new sap.m.Text({text: oDept.EmployeeCount}),
+                            new sap.m.Text({text: oDept.KeyTalentCount})
+                        ]
+                    }));
+                });
+
+                oVBox.addItem(oTable);
+                oPanel.addContent(oVBox);
+            };
+
+            window.displayAIInsights = function(sInsights) {
+                var oPanel = sap.ui.getCore().byId("dataPanel");
+                oPanel.removeAllContent();
+                oPanel.setHeaderText("AI Engagement Ideas");
+
+                // Create a formatted display for AI insights
+                var oVBox = new sap.m.VBox({
+                    class: "sapUiMediumMargin",
+                    alignItems: "Start",
+                    items: [
+                        new sap.m.Text({
+                            text: "Generated Engagement Ideas for Engineering Department:",
+                            class: "sapUiMediumMarginBottom"
+                        })
+                    ]
+                });
+
+                // Split the insights by semicolon and create bullet points
+                var aIdeas = sInsights.split(';').map(function(idea) {
+                    return idea.trim();
+                }).filter(function(idea) {
+                    return idea.length > 0;
+                });
+
+                aIdeas.forEach(function(idea) {
+                    oVBox.addItem(new sap.m.Text({
+                        text: "• " + idea,
+                        class: "sapUiSmallMarginBottom"
+                    }).addStyleClass("sapUiSmallMarginBottom"));
+                });
+
+                oPanel.addContent(oVBox);
+            };
+
+            window.displayTeamPerformance = function(sPerformance) {
+                var oPanel = sap.ui.getCore().byId("dataPanel");
+                oPanel.removeAllContent();
+                oPanel.setHeaderText("Team Performance Analysis - Engineering");
+
+                // Parse the performance data
+                var aLines = sPerformance.split('\n').map(function(line) {
+                    return line.trim();
+                }).filter(function(line) {
+                    return line.length > 0;
+                });
+
+                var oVBox = new sap.m.VBox({
+                    items: []
+                });
+
+                aLines.forEach(function(line) {
+                    if (line.startsWith('-')) {
+                        // This is a metric line
+                        oVBox.addItem(new sap.m.Text({
+                            text: line,
+                            class: "sapUiMediumMarginBottom"
+                        }).addStyleClass("sapUiMediumMarginBottom"));
+                    } else {
+                        // This is a header line
+                        oVBox.addItem(new sap.m.Text({
+                            text: line,
+                            class: "sapUiMediumMarginBottom"
+                        }).addStyleClass("sapUiMediumMarginBottom sapUiMediumMarginTop"));
+                    }
+                });
+
+                oPanel.addContent(oVBox);
+            };
+
+            window.displayPolicyAnalysis = function(sPolicyAnalysis) {
+                var oPanel = sap.ui.getCore().byId("dataPanel");
+                oPanel.removeAllContent();
+                oPanel.setHeaderText("Policy Gap Analysis Results");
+
+                // Parse the policy analysis data
+                var oVBox = new sap.m.VBox({
+                    items: [
+                        new sap.m.Text({
+                            text: "Policy Enhancement Recommendations:",
+                            class: "sapUiMediumMarginBottom"
+                        }).addStyleClass("sapUiMediumMarginBottom")
+                    ]
+                });
+
+                // Split by semicolon and create formatted recommendations
+                var aRecommendations = sPolicyAnalysis.split(';').map(function(rec) {
+                    return rec.trim();
+                }).filter(function(rec) {
+                    return rec.length > 0;
+                });
+
+                aRecommendations.forEach(function(recommendation) {
+                    if (recommendation.toLowerCase().includes('theme:') ||
+                        recommendation.toLowerCase().includes('suggestions:') ||
+                        recommendation.toLowerCase().includes('analysis completed')) {
+                        // Header or summary text
+                        oVBox.addItem(new sap.m.Text({
+                            text: recommendation,
+                            class: "sapUiMediumMarginBottom"
+                        }).addStyleClass("sapUiMediumMarginBottom"));
+                    } else {
+                        // Recommendation item
+                        oVBox.addItem(new sap.m.Text({
+                            text: "• " + recommendation,
+                            class: "sapUiSmallMarginBottom"
+                        }).addStyleClass("sapUiSmallMarginBottom"));
+                    }
+                });
+
+                oPanel.addContent(oVBox);
+            };
+        });
+    </script>
+</head>
+<body class="sapUiBody">
+    <div id="content"></div>
+</body>
+</html>

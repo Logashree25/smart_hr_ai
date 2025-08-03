@@ -1,0 +1,201 @@
+<mvc:View
+    controllerName="smarthrui.controller.Analytics"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    
+    <Page id="analyticsPage" title="{i18n>analyticsTitle}">
+        <content>
+            <VBox class="sapUiMediumMargin">
+                
+                <!-- Department Analytics -->
+                <Panel headerText="{i18n>departmentSummary}" class="sapUiResponsiveMargin">
+                    <content>
+                        <Table id="departmentAnalyticsTable" 
+                               items="{/DepartmentSummary}"
+                               class="sapUiResponsiveMargin">
+                            <headerToolbar>
+                                <Toolbar>
+                                    <Title text="Department Overview"/>
+                                    <ToolbarSpacer/>
+                                    <Button icon="sap-icon://refresh" press="onRefreshDepartments"/>
+                                </Toolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column>
+                                    <Text text="{i18n>department}"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Total Employees"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Key Talent"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Key Talent %"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Actions"/>
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{Department}"/>
+                                        <Text text="{EmployeeCount}"/>
+                                        <Text text="{KeyTalentCount}"/>
+                                        <Text text="{= Math.round((${KeyTalentCount} / ${EmployeeCount}) * 100)}%"/>
+                                        <Button text="Analyze Team"
+                                              press="onAnalyzeTeam"
+                                              type="Emphasized"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </content>
+                </Panel>
+
+                <!-- Attrition Risk Summary -->
+                <Panel headerText="{i18n>attritionRisk}" class="sapUiResponsiveMargin">
+                    <content>
+                        <Table id="attritionRiskTable" 
+                               items="{/AttritionRiskSummary}"
+                               class="sapUiResponsiveMargin">
+                            <headerToolbar>
+                                <Toolbar>
+                                    <Title text="Attrition Risk by Department"/>
+                                    <ToolbarSpacer/>
+                                    <Button icon="sap-icon://refresh" press="onRefreshAttritionRisk"/>
+                                </Toolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column>
+                                    <Text text="{i18n>department}"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Employees at Risk"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Average Risk Score"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Risk Level"/>
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{Department}"/>
+                                        <Text text="{EmployeesAtRisk}"/>
+                                        <Text text="{AvgRiskScore}"/>
+                                        <Text text="{= ${AvgRiskScore} > 0.7 ? 'High' : ${AvgRiskScore} > 0.4 ? 'Medium' : 'Low'}"
+                                              class="{= ${AvgRiskScore} > 0.7 ? 'smarthr-status-high' : ${AvgRiskScore} > 0.4 ? 'smarthr-status-medium' : 'smarthr-status-low'}"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </content>
+                </Panel>
+
+                <!-- Performance Metrics -->
+                <Panel headerText="{i18n>performanceMetrics}" class="sapUiResponsiveMargin">
+                    <content>
+                        <Table id="performanceMetricsTable" 
+                               items="{/PerformanceMetrics}"
+                               growing="true"
+                               growingThreshold="10"
+                               class="sapUiResponsiveMargin">
+                            <headerToolbar>
+                                <Toolbar>
+                                    <Title text="Recent Performance Data"/>
+                                    <ToolbarSpacer/>
+                                    <ComboBox id="periodFilter"
+                                            items="{view>/periods}"
+                                            selectedKey="{view>/selectedPeriod}"
+                                            selectionChange="onPeriodFilterChange"
+                                            placeholder="Filter by Period">
+                                        <core:Item key="{view>}" text="{view>}"/>
+                                    </ComboBox>
+                                    <Button icon="sap-icon://refresh" press="onRefreshPerformance"/>
+                                </Toolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column>
+                                    <Text text="Employee"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Period"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Score"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Goals Met"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Manager Rating"/>
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem press="onPerformancePress">
+                                    <cells>
+                                        <Text text="{EmployeeID/FirstName} {EmployeeID/LastName}"/>
+                                        <Text text="{Period}"/>
+                                        <Text text="{Score}"/>
+                                        <Text text="{GoalsMet}%"/>
+                                        <Text text="{ManagerRating}/10"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </content>
+                </Panel>
+
+                <!-- Employee Satisfaction Data -->
+                <Panel headerText="Employee Satisfaction" class="sapUiResponsiveMargin">
+                    <content>
+                        <VBox class="sapUiMediumMargin">
+                            <HBox alignItems="Center" class="sapUiMediumMarginBottom">
+                                <Title text="Employee Satisfaction Data" level="H3"/>
+                                <ToolbarSpacer/>
+                                <Text text="Average Score: {view>/avgSatisfactionScore}%" class="smarthr-kpi-number"/>
+                            </HBox>
+
+                            <Table id="satisfactionDataTable"
+                                   items="{/SatisfactionSurvey}"
+                                   growing="true"
+                                   growingThreshold="10"
+                                   class="sapUiResponsiveMargin">
+                                <columns>
+                                    <Column>
+                                        <Text text="Employee"/>
+                                    </Column>
+                                    <Column>
+                                        <Text text="Survey Date"/>
+                                    </Column>
+                                    <Column>
+                                        <Text text="Score"/>
+                                    </Column>
+                                    <Column>
+                                        <Text text="Comments"/>
+                                    </Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{EmployeeID/FirstName} {EmployeeID/LastName}"/>
+                                            <Text text="{path: 'SurveyDate', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'MMM dd, yyyy'}}"/>
+                                            <Text text="{Score}/100"/>
+                                            <Text text="{Comments}" maxLines="2"/>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </VBox>
+                    </content>
+                </Panel>
+
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

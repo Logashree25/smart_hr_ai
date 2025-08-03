@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart HR Portal</title>
+    <script
+        id="sap-ui-bootstrap"
+        src="https://ui5.sap.com/1.120.0/resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_horizon"
+        data-sap-ui-libs="sap.m"
+        data-sap-ui-async="true">
+    </script>
+</head>
+<body class="sapUiBody">
+    <div id="content"></div>
+    
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            console.log("UI5 initialized");
+            
+            // Create the main app
+            var oApp = new sap.m.App({
+                pages: [
+                    new sap.m.Page({
+                        title: "Smart HR Portal",
+                        content: [
+                            new sap.m.Panel({
+                                headerText: "Welcome to Smart HR Portal",
+                                class: "sapUiResponsiveMargin",
+                                content: [
+                                    new sap.m.VBox({
+                                        class: "sapUiMediumMargin",
+                                        items: [
+                                            new sap.m.Text({
+                                                text: "AI-Powered HR Management System",
+                                                class: "sapUiMediumMarginBottom"
+                                            }),
+                                            new sap.m.HBox({
+                                                wrap: "Wrap",
+                                                justifyContent: "Start",
+                                                alignItems: "Center",
+                                                class: "sapUiMediumMarginBottom",
+                                                items: [
+                                                    new sap.m.Button({
+                                                        text: "Employee Overviews",
+                                                        icon: "sap-icon://employee",
+                                                        type: "Emphasized",
+                                                        press: function() {
+                                                            loadEmployees();
+                                                        }
+                                                    }).addStyleClass("sapUiTinyMarginEnd"),
+                                                    new sap.m.Button({
+                                                        text: "Satisfaction Survey",
+                                                        icon: "sap-icon://group",
+                                                        type: "Emphasized",
+                                                        press: function() {
+                                                            loadDepartments();
+                                                        }
+                                                    }).addStyleClass("sapUiTinyMarginEnd"),
+                                                    new sap.m.Button({
+                                                        text: "Generate AI Insights",
+                                                        icon: "sap-icon://lightbulb",
+                                                        type: "Emphasized",
+                                                        press: function() {
+                                                            generateInsights();
+                                                        }
+                                                    }).addStyleClass("sapUiTinyMarginEnd"),
+                                                    new sap.m.Button({
+                                                        text: "Team Performance",
+                                                        icon: "sap-icon://chart-axis",
+                                                        type: "Default",
+                                                        press: function() {
+                                                            analyzeTeamPerformance();
+                                                        }
+                                                    }).addStyleClass("sapUiTinyMarginEnd"),
+                                                    new sap.m.Button({
+                                                        text: "Policy Analysis",
+                                                        icon: "sap-icon://document",
+                                                        type: "Default",
+                                                        press: function() {
+                                                            analyzePolicyGaps();
+                                                        }
+                                                    }).addStyleClass("sapUiTinyMarginEnd")
+                                                ]
+                                            })
+                                        ]
+                                    })
+                                ]
+                            }),
+                            new sap.m.Panel({
+                                id: "dataPanel",
+                                headerText: "Data",
+                                class: "sapUiResponsiveMargin",
+                                content: [
+                                    new sap.m.VBox({
+                                        class: "sapUiMediumMargin",
+                                        alignItems: "Start",
+                                        items: [
+                                            new sap.m.Text({
+                                                text: "Click a button above to load data",
+                                                class: "sapUiMediumMarginBottom"
+                                            })
+                                        ]
+                                    })
+                                ]
+                            })
+                        ]
+                    })
+                ]
+            });
+
+            oApp.placeAt("content");
+            console.log("App placed successfully");
+
+            // Load initial data
+            setTimeout(function() {
+                loadEmployees();
+            }, 1000);
+        });
+
+        // Helper functions
+        function loadEmployees() {
+            console.log("Loading employees");
+            var oPanel = sap.ui.getCore().byId("dataPanel");
+            oPanel.removeAllContent();
+            oPanel.setHeaderText("Loading Employees...");
+
+            fetch('http://localhost:8090/hr/Employees')
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Employees loaded:", data.value.length);
+                    displayEmployees(data.value);
+                })
+                .catch(error => {
+                    console.error("Error loading employees:", error);
+                    oPanel.setHeaderText("Error Loading Employees");
+                    oPanel.addContent(new sap.m.Text({
+                        text: "Error: " + error.message
+                    }));
+                });
+        }
+
+        function loadDepartments() {
+            console.log("Loading departments");
+            var oPanel = sap.ui.getCore().byId("dataPanel");
+            oPanel.removeAllContent();
+            oPanel.setHeaderText("Loading Departments...");
+
+            fetch('http://localhost:8090/hr/DepartmentSummary')
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Departments loaded:", data.value.length);
+                    displayDepartments(data.value);
+                })
+                .catch(error => {
+                    console.error("Error loading departments:", error);
+                    oPanel.setHeaderText("Error Loading Departments");
+                    oPanel.addContent(new sap.m.Text({
+                        text: "Error: " + error.message
+                    }));
+                });
+        }
+
+        function generateInsights() {
+            console.log("Generating insights");
+            var oPanel = sap.ui.getCore().byId("dataPanel");
+            oPanel.removeAllContent();
+            oPanel.setHeaderText("Generating AI Insights...");
+
+            fetch('http://localhost:8090/genai/getEngagementIdeas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    department: 'Engineering'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Insights generated:", data.value);
+                displayAIInsights(data.value);
+            })
+            .catch(error => {
+                console.error("Error generating insights:", error);
+                oPanel.setHeaderText("Error Generating Insights");
+                oPanel.addContent(new sap.m.Text({
+                    text: "Error: " + error.message
+                }));
+            });
+        }
+
+        function analyzeTeamPerformance() {
+            console.log("Analyzing team performance");
+            var oPanel = sap.ui.getCore().byId("dataPanel");
+            oPanel.removeAllContent();
+            oPanel.setHeaderText("Team Performance Analysis - Loading...");
+
+            fetch('http://localhost:8090/hr/analyzeTeamPerformance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    department: 'Engineering'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Team performance analyzed:", data.value);
+                displayTeamPerformance(data.value);
+            })
+            .catch(error => {
+                console.error("Error analyzing team performance:", error);
+                oPanel.setHeaderText("Error Analyzing Team Performance");
+                oPanel.addContent(new sap.m.Text({
+                    text: "Error: " + error.message
+                }));
+            });
+        }
+
+        function analyzePolicyGaps() {
+            console.log("Analyzing policy gaps");
+            var oPanel = sap.ui.getCore().byId("dataPanel");
+            oPanel.removeAllContent();
+            oPanel.setHeaderText("Policy Gap Analysis - Loading...");
+
+            fetch('http://localhost:8090/hr/analyzePolicyGaps', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Policy gaps analyzed:", data.value);
+                displayPolicyAnalysis(data.value);
+            })
+            .catch(error => {
+                console.error("Error analyzing policy gaps:", error);
+                oPanel.setHeaderText("Error Analyzing Policy Gaps");
+                oPanel.addContent(new sap.m.Text({
+                    text: "Error: " + error.message
+                }));
+            });
+        }
+
+        // CRUD Functions
+        function searchEmployees() {
+            console.log("Search employees function called");
+            var searchInput = sap.ui.getCore().byId("searchInput");
+            if (!searchInput) {
+                console.error("Search input not found");
+                alert("Search input not found");
+                return;
+            }
+            var searchTerm = searchInput.getValue();
+            console.log("Search term:", searchTerm);
+            var url = searchTerm ?
+                `http://localhost:8090/hr/Employees/search?q=${encodeURIComponent(searchTerm)}` :
+                'http://localhost:8090/hr/Employees';
+
+            console.log("Fetching URL:", url);
+            fetch(url)
+                .then(response => {
+                    console.log("Response received:", response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Data received:", data);
+                    displayEmployees(data.value);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Error searching employees: " + error.message);
+                });
+        }
+
+        function showAddEmployeeDialog() {
+            var oDialog = new sap.m.Dialog({
+                title: "Add New Employee",
+                contentWidth: "500px",
+                content: [
+                    new sap.m.VBox({
+                        class: "sapUiMediumMargin",
+                        items: [
+                            new sap.m.Label({text: "First Name:"}),
+                            new sap.m.Input({id: "addFirstName", placeholder: "Enter first name"}),
+                            new sap.m.Label({text: "Last Name:"}),
+                            new sap.m.Input({id: "addLastName", placeholder: "Enter last name"}),
+                            new sap.m.Label({text: "Role:"}),
+                            new sap.m.Input({id: "addRole", placeholder: "Enter role"}),
+                            new sap.m.Label({text: "Department:"}),
+                            new sap.m.ComboBox({
+                                id: "addDepartment",
+                                items: [
+                                    new sap.ui.core.Item({key: "Engineering", text: "Engineering"}),
+                                    new sap.ui.core.Item({key: "Human Resources", text: "Human Resources"}),
+                                    new sap.ui.core.Item({key: "Marketing", text: "Marketing"}),
+                                    new sap.ui.core.Item({key: "Sales", text: "Sales"})
+                                ]
+                            }),
+                            new sap.m.Label({text: "Team:"}),
+                            new sap.m.Input({id: "addTeam", placeholder: "Enter team"}),
+                            new sap.m.Label({text: "Location:"}),
+                            new sap.m.Input({id: "addLocation", placeholder: "Enter location"}),
+                            new sap.m.Label({text: "Hire Type:"}),
+                            new sap.m.ComboBox({
+                                id: "addHireType",
+                                items: [
+                                    new sap.ui.core.Item({key: "Full-time", text: "Full-time"}),
+                                    new sap.ui.core.Item({key: "Contract", text: "Contract"}),
+                                    new sap.ui.core.Item({key: "Part-time", text: "Part-time"})
+                                ]
+                            }),
+                            new sap.m.Label({text: "Tenure (Months):"}),
+                            new sap.m.Input({id: "addTenure", type: "Number", placeholder: "Enter tenure in months"})
+                        ]
+                    })
+                ],
+                beginButton: new sap.m.Button({
+                    text: "Add Employee",
+                    type: sap.m.ButtonType.Emphasized,
+                    press: function() {
+                        addEmployee();
+                        oDialog.close();
+                    }
+                }),
+                endButton: new sap.m.Button({
+                    text: "Cancel",
+                    press: function() {
+                        oDialog.close();
+                    }
+                })
+            });
+
+            oDialog.open();
+        }
+
+        function addEmployee() {
+            var employeeData = {
+                FirstName: sap.ui.getCore().byId("addFirstName").getValue(),
+                LastName: sap.ui.getCore().byId("addLastName").getValue(),
+                Role: sap.ui.getCore().byId("addRole").getValue(),
+                Department: sap.ui.getCore().byId("addDepartment").getSelectedKey(),
+                Team: sap.ui.getCore().byId("addTeam").getValue(),
+                Location: sap.ui.getCore().byId("addLocation").getValue(),
+                HireType: sap.ui.getCore().byId("addHireType").getSelectedKey(),
+                TenureMonths: parseInt(sap.ui.getCore().byId("addTenure").getValue()) || 0,
+                HireDate: new Date().toISOString().split('T')[0]
+            };
+
+            fetch('http://localhost:8090/hr/Employees', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(employeeData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Employee added:', data);
+                alert("Employee added successfully!");
+                loadEmployees(); // Refresh the list
+            })
+            .catch(error => {
+                console.error('Error adding employee:', error);
+                alert("Error adding employee: " + error.message);
+            });
+        }
+
+        function deleteEmployee(employeeId) {
+            console.log("Delete employee called with ID:", employeeId);
+            if (confirm("Are you sure you want to delete this employee?")) {
+                fetch(`http://localhost:8090/hr/Employees/${employeeId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Employee deleted:', data);
+                    alert("Employee deleted successfully!");
+                    loadEmployees(); // Refresh the list
+                })
+                .catch(error => {
+                    console.error('Error deleting employee:', error);
+                    alert("Error deleting employee: " + error.message);
+                });
+            }
+        }
+
+        function showEditEmployeeDialog(employee) {
+            var oDialog = new sap.m.Dialog({
+                title: "Edit Employee",
+                contentWidth: "500px",
+                content: [
+                    new sap.m.VBox({
+                        class: "sapUiMediumMargin",
+                        items: [
+                            new sap.m.Label({text: "First Name:"}),
+                            new sap.m.Input({id: "editFirstName", value: employee.FirstName, placeholder: "Enter first name"}),
+                            new sap.m.Label({text: "Last Name:"}),
+                            new sap.m.Input({id: "editLastName", value: employee.LastName, placeholder: "Enter last name"}),
+                            new sap.m.Label({text: "Role:"}),
+                            new sap.m.Input({id: "editRole", value: employee.Role, placeholder: "Enter role"}),
+                            new sap.m.Label({text: "Department:"}),
+                            new sap.m.ComboBox({
+                                id: "editDepartment",
+                                selectedKey: employee.Department,
+                                items: [
+                                    new sap.ui.core.Item({key: "Engineering", text: "Engineering"}),
+                                    new sap.ui.core.Item({key: "Human Resources", text: "Human Resources"}),
+                                    new sap.ui.core.Item({key: "Marketing", text: "Marketing"}),
+                                    new sap.ui.core.Item({key: "Sales", text: "Sales"})
+                                ]
+                            }),
+                            new sap.m.Label({text: "Team:"}),
+                            new sap.m.Input({id: "editTeam", value: employee.Team, placeholder: "Enter team"}),
+                            new sap.m.Label({text: "Location:"}),
+                            new sap.m.Input({id: "editLocation", value: employee.Location, placeholder: "Enter location"}),
+                            new sap.m.Label({text: "Hire Type:"}),
+                            new sap.m.ComboBox({
+                                id: "editHireType",
+                                selectedKey: employee.HireType,
+                                items: [
+                                    new sap.ui.core.Item({key: "Full-time", text: "Full-time"}),
+                                    new sap.ui.core.Item({key: "Contract", text: "Contract"}),
+                                    new sap.ui.core.Item({key: "Part-time", text: "Part-time"})
+                                ]
+                            }),
+                            new sap.m.Label({text: "Tenure (Months):"}),
+                            new sap.m.Input({id: "editTenure", value: employee.TenureMonths.toString(), type: "Number", placeholder: "Enter tenure in months"})
+                        ]
+                    })
+                ],
+                beginButton: new sap.m.Button({
+                    text: "Update Employee",
+                    type: sap.m.ButtonType.Emphasized,
+                    press: function() {
+                        updateEmployee(employee.ID);
+                        oDialog.close();
+                    }
+                }),
+                endButton: new sap.m.Button({
+                    text: "Cancel",
+                    press: function() {
+                        oDialog.close();
+                    }
+                })
+            });
+
+            oDialog.open();
+        }
+
+        function updateEmployee(employeeId) {
+            var employeeData = {
+                FirstName: sap.ui.getCore().byId("editFirstName").getValue(),
+                LastName: sap.ui.getCore().byId("editLastName").getValue(),
+                Role: sap.ui.getCore().byId("editRole").getValue(),
+                Department: sap.ui.getCore().byId("editDepartment").getSelectedKey(),
+                Team: sap.ui.getCore().byId("editTeam").getValue(),
+                Location: sap.ui.getCore().byId("editLocation").getValue(),
+                HireType: sap.ui.getCore().byId("editHireType").getSelectedKey(),
+                TenureMonths: parseInt(sap.ui.getCore().byId("editTenure").getValue()) || 0
+            };
+
+            fetch(`http://localhost:8090/hr/Employees/${employeeId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(employeeData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Employee updated:', data);
+                alert("Employee updated successfully!");
+                loadEmployees(); // Refresh the list
+            })
+            .catch(error => {
+                console.error('Error updating employee:', error);
+                alert("Error updating employee: " + error.message);
+            });
+        }
+
+        // Display functions
+        function displayEmployees(aEmployees) {
+            var oPanel = sap.ui.getCore().byId("dataPanel");
+            oPanel.removeAllContent();
+            oPanel.setHeaderText("Employees (" + aEmployees.length + " items)");
+
+            var oVBox = new sap.m.VBox({
+                class: "sapUiMediumMargin",
+                alignItems: "Start",
+                items: []
+            });
+
+            // Destroy existing search input if it exists to avoid duplicate ID
+            var existingSearchInput = sap.ui.getCore().byId("searchInput");
+            if (existingSearchInput) {
+                existingSearchInput.destroy();
+            }
+
+            // Add search bar and action buttons
+            var oToolbar = new sap.m.Toolbar({
+                content: [
+                    new sap.m.SearchField({
+                        id: "searchInput",
+                        placeholder: "Search employees...",
+                        width: "300px",
+                        search: searchEmployees
+                    }),
+                    new sap.m.Button({
+                        text: "Search",
+                        icon: "sap-icon://search",
+                        press: searchEmployees
+                    }),
+                    new sap.m.ToolbarSpacer(),
+                    new sap.m.Button({
+                        text: "Add Employee",
+                        type: sap.m.ButtonType.Emphasized,
+                        icon: "sap-icon://add",
+                        press: showAddEmployeeDialog
+                    }),
+                    new sap.m.Button({
+                        text: "Refresh",
+                        icon: "sap-icon://refresh",
+                        press: loadEmployees
+                    })
+                ]
+            });
+            oVBox.addItem(oToolbar);
+
+            if (aEmployees.length === 0) {
+                oVBox.addItem(new sap.m.Text({
+                    text: "No employees found"
+                }));
+                oPanel.addContent(oVBox);
+                return;
+            }
+
+            // Create a table for better display
+            var oTable = new sap.m.Table({
+                class: "sapUiMediumMarginTop",
+                columns: [
+                    new sap.m.Column({header: new sap.m.Text({text: "Employee ID"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Name"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Role"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Department"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Team"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Location"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Hire Date"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Hire Type"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Tenure (Months)"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Actions"})})
+                ]
+            });
+
+            aEmployees.forEach(function(oEmployee) {
+                oTable.addItem(new sap.m.ColumnListItem({
+                    cells: [
+                        new sap.m.Text({text: oEmployee.EmployeeID}),
+                        new sap.m.Text({text: oEmployee.FirstName + " " + oEmployee.LastName}),
+                        new sap.m.Text({text: oEmployee.Role}),
+                        new sap.m.Text({text: oEmployee.Department}),
+                        new sap.m.Text({text: oEmployee.Team}),
+                        new sap.m.Text({text: oEmployee.Location}),
+                        new sap.m.Text({text: oEmployee.HireDate}),
+                        new sap.m.Text({text: oEmployee.HireType}),
+                        new sap.m.Text({text: oEmployee.TenureMonths + " months"}),
+                        new sap.m.HBox({
+                            items: [
+                                new sap.m.Button({
+                                    text: "Edit",
+                                    type: sap.m.ButtonType.Default,
+                                    icon: "sap-icon://edit",
+                                    press: function() {
+                                        showEditEmployeeDialog(oEmployee);
+                                    }
+                                }).addStyleClass("sapUiTinyMarginEnd"),
+                                new sap.m.Button({
+                                    text: "Delete",
+                                    type: sap.m.ButtonType.Reject,
+                                    icon: "sap-icon://delete",
+                                    press: function() {
+                                        deleteEmployee(oEmployee.ID);
+                                    }
+                                })
+                            ]
+                        })
+                    ]
+                }));
+            });
+
+            oVBox.addItem(oTable);
+            oPanel.addContent(oVBox);
+        }
+
+        function displayDepartments(aDepartments) {
+            var oPanel = sap.ui.getCore().byId("dataPanel");
+            oPanel.removeAllContent();
+            oPanel.setHeaderText("Satisfaction Survey (" + aDepartments.length + " departments)");
+
+            var oVBox = new sap.m.VBox({
+                class: "sapUiMediumMargin",
+                alignItems: "Start",
+                items: []
+            });
+
+            if (aDepartments.length === 0) {
+                oVBox.addItem(new sap.m.Text({
+                    text: "No departments found"
+                }));
+                oPanel.addContent(oVBox);
+                return;
+            }
+
+            // Create a table for departments
+            var oTable = new sap.m.Table({
+                class: "sapUiMediumMarginTop",
+                columns: [
+                    new sap.m.Column({header: new sap.m.Text({text: "Department"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Total Employees"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Satisfaction Score"})})
+                ]
+            });
+
+            aDepartments.forEach(function(oDept) {
+                // Generate a satisfaction score between 3.5 and 4.8 (out of 5)
+                var satisfactionScore = (Math.random() * 1.3 + 3.5).toFixed(1);
+
+                // Format score to remove .0 from whole numbers
+                var formattedScore = satisfactionScore.endsWith('.0') ?
+                    satisfactionScore.slice(0, -2) : satisfactionScore;
+
+                oTable.addItem(new sap.m.ColumnListItem({
+                    cells: [
+                        new sap.m.Link({
+                            text: oDept.Department,
+                            press: function() {
+                                showDepartmentEmployees(oDept.Department);
+                            }
+                        }),
+                        new sap.m.Text({text: oDept.EmployeeCount}),
+                        new sap.m.Text({
+                            text: formattedScore + "/5",
+                            design: satisfactionScore >= 4.0 ? "Success" : satisfactionScore >= 3.5 ? "Warning" : "Error"
+                        })
+                    ]
+                }));
+            });
+
+            oVBox.addItem(oTable);
+            oPanel.addContent(oVBox);
+        }
+
+        function showDepartmentEmployees(departmentName) {
+            console.log("Loading employees for department:", departmentName);
+
+            // Fetch employees filtered by department
+            fetch(`http://localhost:8090/hr/Employees/search?q=${encodeURIComponent(departmentName)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Filter employees by exact department match
+                    var departmentEmployees = data.value.filter(emp => emp.Department === departmentName);
+                    displayDepartmentEmployees(departmentEmployees, departmentName);
+                })
+                .catch(error => {
+                    console.error('Error loading department employees:', error);
+                    alert("Error loading department employees: " + error.message);
+                });
+        }
+
+        function displayDepartmentEmployees(employees, departmentName) {
+            var oPanel = sap.ui.getCore().byId("dataPanel");
+            oPanel.removeAllContent();
+            oPanel.setHeaderText(departmentName + " Department - Employee Satisfaction (" + employees.length + " employees)");
+
+            var oVBox = new sap.m.VBox({
+                class: "sapUiMediumMargin",
+                alignItems: "Start",
+                items: []
+            });
+
+            // Add back button
+            var oBackButton = new sap.m.Button({
+                text: "← Back to Satisfaction Survey",
+                icon: "sap-icon://nav-back",
+                press: function() {
+                    loadDepartments();
+                }
+            }).addStyleClass("sapUiMediumMarginBottom");
+
+            oVBox.addItem(oBackButton);
+
+            if (employees.length === 0) {
+                oVBox.addItem(new sap.m.Text({
+                    text: "No employees found in this department"
+                }));
+                oPanel.addContent(oVBox);
+                return;
+            }
+
+            // Create table for department employees
+            var oTable = new sap.m.Table({
+                class: "sapUiMediumMarginTop",
+                columns: [
+                    new sap.m.Column({header: new sap.m.Text({text: "Employee ID"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Name"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Role"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Team"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Satisfaction Score"})})
+                ]
+            });
+
+            employees.forEach(function(employee) {
+                // Generate individual satisfaction score for each employee
+                var satisfactionScore = (Math.random() * 1.5 + 3.2).toFixed(1);
+                var formattedScore = satisfactionScore.endsWith('.0') ?
+                    satisfactionScore.slice(0, -2) : satisfactionScore;
+
+                oTable.addItem(new sap.m.ColumnListItem({
+                    cells: [
+                        new sap.m.Text({text: employee.EmployeeID}),
+                        new sap.m.Text({text: employee.FirstName + " " + employee.LastName}),
+                        new sap.m.Text({text: employee.Role}),
+                        new sap.m.Text({text: employee.Team}),
+                        new sap.m.Text({
+                            text: formattedScore + "/5",
+                            design: satisfactionScore >= 4.0 ? "Success" : satisfactionScore >= 3.5 ? "Warning" : "Error"
+                        })
+                    ]
+                }));
+            });
+
+            oVBox.addItem(oTable);
+            oPanel.addContent(oVBox);
+        }
+
+        function displayAIInsights(sInsights) {
+            var oPanel = sap.ui.getCore().byId("dataPanel");
+            oPanel.removeAllContent();
+            oPanel.setHeaderText("AI Engagement Ideas");
+
+            var oVBox = new sap.m.VBox({
+                class: "sapUiMediumMargin",
+                alignItems: "Start",
+                items: [
+                    new sap.m.Text({
+                        text: sInsights,
+                        class: "sapUiMediumMarginBottom"
+                    })
+                ]
+            });
+
+            oPanel.addContent(oVBox);
+        }
+
+        function displayTeamPerformance(sAnalysis) {
+            var oPanel = sap.ui.getCore().byId("dataPanel");
+            oPanel.removeAllContent();
+            oPanel.setHeaderText("Team Performance Analysis");
+
+            var oVBox = new sap.m.VBox({
+                class: "sapUiMediumMargin",
+                alignItems: "Start",
+                items: [
+                    new sap.m.FormattedText({
+                        htmlText: sAnalysis.replace(/\n/g, '<br>'),
+                        class: "sapUiMediumMarginBottom"
+                    })
+                ]
+            });
+
+            oPanel.addContent(oVBox);
+        }
+
+        function displayPolicyAnalysis(sAnalysis) {
+            var oPanel = sap.ui.getCore().byId("dataPanel");
+            oPanel.removeAllContent();
+            oPanel.setHeaderText("Policy Gap Analysis Results");
+
+            var oVBox = new sap.m.VBox({
+                class: "sapUiMediumMargin",
+                alignItems: "Start",
+                items: [
+                    new sap.m.Text({
+                        text: sAnalysis,
+                        class: "sapUiMediumMarginBottom"
+                    })
+                ]
+            });
+
+            oPanel.addContent(oVBox);
+        }
+    </script>
+</body>
+</html>

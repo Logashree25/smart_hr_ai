@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart HR Portal</title>
+    <script
+        id="sap-ui-bootstrap"
+        src="https://ui5.sap.com/1.120.0/resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_horizon"
+        data-sap-ui-libs="sap.m">
+    </script>
+</head>
+<body class="sapUiBody">
+    <div id="content"></div>
+    
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            console.log("UI5 Core initialized successfully");
+            
+            try {
+                // Create a simple page
+                var oPage = new sap.m.Page({
+                    title: "Smart HR Portal",
+                    content: [
+                        new sap.m.Panel({
+                            headerText: "Welcome to Smart HR Portal",
+                            content: [
+                                new sap.m.Text({
+                                    text: "AI-Powered HR Management System"
+                                }),
+                                new sap.m.Button({
+                                    text: "View Employees",
+                                    type: "Emphasized",
+                                    press: function() {
+                                        sap.m.MessageToast.show("Loading employees...");
+                                        loadEmployees();
+                                    }
+                                }),
+                                new sap.m.Button({
+                                    text: "Department Summary", 
+                                    type: "Emphasized",
+                                    press: function() {
+                                        sap.m.MessageToast.show("Loading departments...");
+                                        loadDepartments();
+                                    }
+                                }),
+                                new sap.m.Button({
+                                    text: "Generate AI Insights",
+                                    type: "Emphasized", 
+                                    press: function() {
+                                        sap.m.MessageToast.show("Generating insights...");
+                                        generateInsights();
+                                    }
+                                })
+                            ]
+                        }),
+                        new sap.m.Panel({
+                            id: "dataPanel",
+                            headerText: "Data",
+                            content: [
+                                new sap.m.Text({
+                                    text: "Click a button above to load data"
+                                })
+                            ]
+                        })
+                    ]
+                });
+
+                // Create app and add page
+                var oApp = new sap.m.App({
+                    pages: [oPage]
+                });
+
+                oApp.placeAt("content");
+                console.log("App placed successfully");
+
+                // Load initial data after a delay
+                setTimeout(function() {
+                    console.log("Loading initial data");
+                    loadEmployees();
+                }, 2000);
+
+            } catch (error) {
+                console.error("Error creating UI:", error);
+                document.getElementById("content").innerHTML = 
+                    "<h1>Error loading UI</h1><p>" + error.message + "</p>";
+            }
+        });
+
+        function loadEmployees() {
+            console.log("Loading employees...");
+            var oPanel = sap.ui.getCore().byId("dataPanel");
+            if (!oPanel) {
+                console.error("Data panel not found");
+                return;
+            }
+
+            oPanel.removeAllContent();
+            oPanel.setHeaderText("Loading Employees...");
+
+            fetch('/hr/Employees')
+                .then(response => {
+                    console.log("Response status:", response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Employees loaded:", data.value.length);
+                    
+                    oPanel.setHeaderText("Employees (" + data.value.length + " items)");
+                    
+                    data.value.forEach(function(emp) {
+                        oPanel.addContent(new sap.m.Text({
+                            text: emp.FirstName + " " + emp.LastName + " - " + emp.Role + " (" + emp.Department + ")"
+                        }));
+                    });
+                })
+                .catch(error => {
+                    console.error("Error loading employees:", error);
+                    oPanel.setHeaderText("Error Loading Employees");
+                    oPanel.addContent(new sap.m.Text({
+                        text: "Error: " + error.message
+                    }));
+                });
+        }
+
+        function loadDepartments() {
+            console.log("Loading departments...");
+            var oPanel = sap.ui.getCore().byId("dataPanel");
+            if (!oPanel) {
+                console.error("Data panel not found");
+                return;
+            }
+
+            oPanel.removeAllContent();
+            oPanel.setHeaderText("Loading Departments...");
+
+            fetch('/hr/DepartmentSummary')
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Departments loaded:", data.value.length);
+                    
+                    oPanel.setHeaderText("Department Summary (" + data.value.length + " departments)");
+                    
+                    data.value.forEach(function(dept) {
+                        oPanel.addContent(new sap.m.Text({
+                            text: dept.Department + " - " + dept.EmployeeCount + " employees (" + dept.FullTimeCount + " full-time)"
+                        }));
+                    });
+                })
+                .catch(error => {
+                    console.error("Error loading departments:", error);
+                    oPanel.setHeaderText("Error Loading Departments");
+                    oPanel.addContent(new sap.m.Text({
+                        text: "Error: " + error.message
+                    }));
+                });
+        }
+
+        function generateInsights() {
+            console.log("Generating insights...");
+            var oPanel = sap.ui.getCore().byId("dataPanel");
+            if (!oPanel) {
+                console.error("Data panel not found");
+                return;
+            }
+
+            oPanel.removeAllContent();
+            oPanel.setHeaderText("Generating AI Insights...");
+
+            fetch('/hr/generateEngagementIdeas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    department: 'Engineering'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Insights generated:", data.value);
+                
+                oPanel.setHeaderText("AI Engagement Ideas");
+                oPanel.addContent(new sap.m.Text({
+                    text: data.value
+                }));
+            })
+            .catch(error => {
+                console.error("Error generating insights:", error);
+                oPanel.setHeaderText("Error Generating Insights");
+                oPanel.addContent(new sap.m.Text({
+                    text: "Error: " + error.message
+                }));
+            });
+        }
+    </script>
+</body>
+</html>

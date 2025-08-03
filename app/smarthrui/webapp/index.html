@@ -4,26 +4,38 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart HR Portal</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
     <script
         id="sap-ui-bootstrap"
-        src="https://ui5.sap.com/resources/sap-ui-core.js"
+        src="https://ui5.sap.com/1.120.0/resources/sap-ui-core.js"
         data-sap-ui-theme="sap_horizon"
-        data-sap-ui-resourceroots='{
-            "smart.hr.portal": "./"
-        }'
-        data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
-        data-sap-ui-compatVersion="edge"
+        data-sap-ui-libs="sap.m,sap.ui.core"
         data-sap-ui-async="true"
-        data-sap-ui-frameOptions="trusted"
-        data-sap-ui-bindingSyntax="complex">
+        data-sap-ui-resourceroots='{
+            "smarthrui": "./"
+        }'>
     </script>
 </head>
 <body class="sapUiBody" id="content">
-    <div data-sap-ui-component 
-         data-name="smart.hr.portal" 
-         data-id="container" 
-         data-settings='{"id" : "smart.hr.portal"}'>
-    </div>
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            console.log("UI5 Core initialized");
+
+            // Load the Component
+            sap.ui.require([
+                "sap/ui/core/ComponentContainer"
+            ], function(ComponentContainer) {
+
+                new ComponentContainer({
+                    name: "smarthrui",
+                    settings: {
+                        id: "smarthrui"
+                    },
+                    async: true
+                }).placeAt("content");
+
+            });
+        });
+    </script>
 </body>
 </html>
+
